@@ -2,6 +2,8 @@ package com.framgia.music_29.data.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Song implements Parcelable {
 
@@ -9,18 +11,28 @@ public class Song implements Parcelable {
     private String mId;
     private String mTitle;
     private String mUri;
-    private String mPermalink;
     private boolean mDownloadable;
     private boolean mStreamable;
     private String mDownloadUrl;
     private String mUserFullName;
+
+    public Song(JSONObject track) throws JSONException {
+        mId = String.valueOf(track.getLong(JSONKey.ID));
+        mTitle = track.getString(JSONKey.TITLE);
+        mArtworkUrl = track.getString(JSONKey.ARTWORK_URL);
+        mDownloadable = track.getBoolean(JSONKey.DOWNLOAD_ABLE);
+        mStreamable = track.getBoolean(JSONKey.STREAM_ABLE);
+        mDownloadUrl = track.getString(JSONKey.DOWNLOAD_URL);
+        mUri = track.getString(JSONKey.URI);
+        mUserFullName =
+                track.getJSONObject(JSONKey.USER).getString(JSONKey.FULL_USER);
+    }
 
     protected Song(Parcel in) {
         mArtworkUrl = in.readString();
         mId = in.readString();
         mTitle = in.readString();
         mUri = in.readString();
-        mPermalink = in.readString();
         mDownloadable = in.readByte() != 0;
         mStreamable = in.readByte() != 0;
         mDownloadUrl = in.readString();
@@ -33,7 +45,6 @@ public class Song implements Parcelable {
         dest.writeString(mId);
         dest.writeString(mTitle);
         dest.writeString(mUri);
-        dest.writeString(mPermalink);
         dest.writeByte((byte) (mDownloadable ? 1 : 0));
         dest.writeByte((byte) (mStreamable ? 1 : 0));
         dest.writeString(mDownloadUrl);
@@ -89,14 +100,6 @@ public class Song implements Parcelable {
         mUri = uri;
     }
 
-    public String getPermalink() {
-        return mPermalink;
-    }
-
-    public void setPermalink(String permalink) {
-        mPermalink = permalink;
-    }
-
     public boolean isDownloadable() {
         return mDownloadable;
     }
@@ -127,5 +130,17 @@ public class Song implements Parcelable {
 
     public void setUserFullName(String userFullName) {
         mUserFullName = userFullName;
+    }
+
+    public static class JSONKey {
+        public static final String ID = "id";
+        public static final String TITLE = "title";
+        public static final String ARTWORK_URL = "artwork_url";
+        public static final String DOWNLOAD_ABLE = "downloadable";
+        public static final String DOWNLOAD_URL = "download_url";
+        public static final String URI = "uri";
+        public static final String USER = "user";
+        public static final String FULL_USER = "full_name";
+        public static final String STREAM_ABLE = "streamable";
     }
 }

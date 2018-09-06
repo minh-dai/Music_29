@@ -1,4 +1,17 @@
 <resources>
     <string name="app_name">Music_29</string>
     <string name="hello_world">Hello World!</string>
+    <string name="name_music_app">Sound Cloud Music</string>
+    <string name="name_all_music">All Music</string>
+    <string name="more_song">More ></string>
+    <string name="genres">Genres</string>
+    <string name="genre_rock">Rock</string>
+    <string name="genre_ambient">Ambient</string>
+    <string name="genre_classical">Alassical</string>
+    <string name="genre_all_audio">All Audio</string>
+    <string name="genre_country">Country</string>
+    <string name="name_tab_online">Online</string>
+    <string name="name_tab_offline">Offline</string>
+    <string name="not_available">"Mobile network not available"</string>
+    <string name="error">"Error :"</string>
 </resources>
