@@ -25,5 +25,8 @@ public interface ConstantApi {
     String AGENRES="%3Agenres%3";
     String QUERY_URN="&query_urn";
     String ACHARTS="%3Acharts%3";
-
+    String GENRE_ALTERNATIVEROCK = "alternativerock";
+    String GENRE_AMBIENT = "ambient";
+    String GENRE_CLASSICAL = "classical";
+    String GENRE_COUNTRY = "country";
 }
