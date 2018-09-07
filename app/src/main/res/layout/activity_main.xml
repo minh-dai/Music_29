@@ -13,13 +13,13 @@
         android:text="@string/name_music_app"
         android:textColor="@color/color_white"
         android:textSize="@dimen/sp_18"
-        app:layout_constraintEnd_toStartOf="@+id/imageSearch"
+        app:layout_constraintEnd_toStartOf="@+id/image_search"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
 
     <ImageView
-        android:id="@+id/imageSearch"
+        android:id="@+id/image_search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
