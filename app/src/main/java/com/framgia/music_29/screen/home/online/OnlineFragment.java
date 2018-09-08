@@ -65,19 +65,19 @@ public class OnlineFragment extends Fragment
     }
 
     private void setAdapterAudios(View view) {
-        RecyclerView mRecyclerViewAudios = view.findViewById(R.id.recycler_view_audios);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view_audios);
         LinearLayoutManager layoutmanager =
                 new LinearLayoutManager(getContext(), LinearLayout.HORIZONTAL, false);
-        mRecyclerViewAudios.setLayoutManager(layoutmanager);
-        mRecyclerViewAudios.setAdapter(mAdapterAudios);
+        recyclerView.setLayoutManager(layoutmanager);
+        recyclerView.setAdapter(mAdapterAudios);
     }
 
     private void setApdaterMusics(View view) {
-        RecyclerView mRecyclerViewMusics = view.findViewById(R.id.recycler_view_musics);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view_musics);
         LinearLayoutManager layoutmanager =
                 new LinearLayoutManager(getContext(), LinearLayout.HORIZONTAL, false);
-        mRecyclerViewMusics.setLayoutManager(layoutmanager);
-        mRecyclerViewMusics.setAdapter(mAdapterMusics);
+        recyclerView.setLayoutManager(layoutmanager);
+        recyclerView.setAdapter(mAdapterMusics);
     }
 
     private void initView(View view) {
