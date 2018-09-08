@@ -9,6 +9,10 @@ public interface PlayerContract {
     }
 
     interface View{
+        void setImageShuffle();
 
+        void setImagePauseSong();
+
+        void setImageLoop();
     }
 }

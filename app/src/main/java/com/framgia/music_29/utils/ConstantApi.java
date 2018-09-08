@@ -1,6 +1,7 @@
 package com.framgia.music_29.utils;
 
 import android.support.annotation.StringDef;
+import com.framgia.music_29.BuildConfig;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -32,4 +33,6 @@ public interface ConstantApi {
     String GENRE_CLASSICAL = "classical";
     String GENRE_COUNTRY = "country";
     String GENRE_PLAYLIST = "PlayList";
+    String PLAY_URL= STREAM+CLIENT_ID+ BuildConfig.API_KEY;
+
 }
