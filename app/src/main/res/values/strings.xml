@@ -22,4 +22,6 @@
     <string name="text_search">Search</string>
     <string name="text_hint_search">Song Name</string>
     <string name="not_find_data">Data not find</string>
+    <string name="song_fail">Song Fail</string>
+>>>>>>> create service
 </resources>

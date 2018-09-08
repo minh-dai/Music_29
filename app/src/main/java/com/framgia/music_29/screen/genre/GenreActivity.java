@@ -1,6 +1,7 @@
 package com.framgia.music_29.screen.genre;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +14,8 @@ import android.widget.Toast;
 import com.framgia.music_29.R;
 import com.framgia.music_29.data.model.Song;
 import com.framgia.music_29.screen.home.online.OnlineFragment;
+import com.framgia.music_29.screen.player.PlayerActivity;
+import com.framgia.music_29.screen.service.MusicService;
 import com.framgia.music_29.utils.ConstantApi;
 import com.framgia.music_29.utils.LoadMore;
 import java.util.ArrayList;
@@ -21,6 +24,7 @@ import java.util.List;
 public class GenreActivity extends AppCompatActivity
         implements GenreContract.View, View.OnClickListener, GenreAdapter.onClickItemListener {
 
+    public static final String EXTRA_SONG = "song";
     private GenreContract.Pesenter mPesenter;
     private GenreAdapter mAdapter;
     private TextView mTextGenre;
@@ -143,7 +147,8 @@ public class GenreActivity extends AppCompatActivity
 
     @Override
     public void onClick(List<Song> songs, int position) {
-        Toast.makeText(this, songs.get(position).getTitle(), Toast.LENGTH_SHORT).show();
+        startActivity(PlayerActivity.getPlayerIntent(this , songs.get(position)));
+        startService(MusicService.getInstance(this, songs, position));
     }
 
     @Override
