@@ -1,18 +1,30 @@
 package com.framgia.music_29.screen.home.offline;
 
+import android.content.Context;
 import com.framgia.music_29.BasePresenter;
+import com.framgia.music_29.data.model.Song;
+import java.util.List;
 
 public interface OfflineFragmentContract {
-    interface Presenter extends BasePresenter<View>{
+    interface Presenter extends BasePresenter<View> {
+        void loadDataPlaylist(Context context);
+
+        void loadDataFavorite();
+
+        void loadDataAlbum();
+
+        void loadDataDownload();
     }
 
     interface View {
-        void onFavoriteClicked();
+        void onFavoriteClicked(List<Song> songs);
 
-        void onPlayListClicked();
+        void onPlayListClicked(List<Song> songs);
 
-        void onSongClicked();
+        void onDownloadClicked(List<Song> songs);
 
-        void onAlbumClicked();
+        void onAlbumClicked(List<Song> songs);
+
+        void onDataError();
     }
 }

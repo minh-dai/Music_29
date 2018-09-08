@@ -4,6 +4,7 @@ import com.framgia.music_29.BuildConfig;
 import com.framgia.music_29.data.model.Genre;
 import com.framgia.music_29.data.source.SongDataSource;
 import com.framgia.music_29.data.source.SongRepository;
+import com.framgia.music_29.data.source.local.SongLocalDataSoure;
 import com.framgia.music_29.data.source.remote.SongRemoteDataSource;
 import com.framgia.music_29.utils.ConstantApi;
 
@@ -14,7 +15,8 @@ public class GenrePresenter implements GenreContract.Pesenter, SongDataSource.Ca
     private Genre mGenre;
 
     public GenrePresenter() {
-        mSongRepository = SongRepository.getInstance(SongRemoteDataSource.getInstance());
+        mSongRepository = SongRepository.getInstance(SongRemoteDataSource.getInstance(),
+                SongLocalDataSoure.getInstance());
         mGenre = new Genre();
     }
 
@@ -35,7 +37,7 @@ public class GenrePresenter implements GenreContract.Pesenter, SongDataSource.Ca
 
     @Override
     public void loadDataForGenre(String genre_song) {
-        StringBuilder url =  new StringBuilder(ConstantApi.BASE_API);
+        StringBuilder url = new StringBuilder(ConstantApi.BASE_API);
         url.append(ConstantApi.PARA_MUSIC_GENRE);
         url.append(genre_song);
         url.append(ConstantApi.CLIENT_ID);
@@ -52,7 +54,7 @@ public class GenrePresenter implements GenreContract.Pesenter, SongDataSource.Ca
 
     @Override
     public void onDataLoaded(Genre genre) {
-        StringBuilder url =  new StringBuilder(genre.getUrl());
+        StringBuilder url = new StringBuilder(genre.getUrl());
         url.append(ConstantApi.CLIENT_ID);
         url.append(BuildConfig.API_KEY);
         mGenre.setUrl(url.toString());
