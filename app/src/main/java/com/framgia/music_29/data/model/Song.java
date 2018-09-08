@@ -19,7 +19,7 @@ public class Song implements Parcelable {
     private String mDownloadUrl;
     private String mUserFullName;
     private byte[] mUriImage;
-
+    
     public Song() {
     }
 
