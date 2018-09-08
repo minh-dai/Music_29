@@ -11,7 +11,7 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/layout_favotite"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?attr/actionBarSize"
         android:layout_marginTop="@dimen/dp_8"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -77,7 +77,7 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/layout_playlist"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?attr/actionBarSize"
         android:layout_marginTop="@dimen/dp_8"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -144,7 +144,7 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/layout_song"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?attr/actionBarSize"
         android:layout_marginTop="@dimen/dp_8"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -152,7 +152,7 @@
         >
 
         <ImageView
-            android:id="@+id/image_song"
+            android:id="@+id/image_song_player"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -179,15 +179,15 @@
             android:layout_marginRight="@dimen/dp_16"
             android:layout_marginStart="@dimen/dp_16"
             android:layout_marginTop="@dimen/dp_8"
-            android:layout_toRightOf="@id/image_song"
+            android:layout_toRightOf="@id/image_song_player"
             android:text="@string/songs"
             android:textColor="@color/color_black"
             android:textSize="@dimen/sp_18"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/image_song"
+            app:layout_constraintBottom_toBottomOf="@+id/image_song_player"
             app:layout_constraintEnd_toStartOf="@+id/image_song_action"
-            app:layout_constraintStart_toEndOf="@+id/image_song"
-            app:layout_constraintTop_toTopOf="@+id/image_song"
+            app:layout_constraintStart_toEndOf="@+id/image_song_player"
+            app:layout_constraintTop_toTopOf="@+id/image_song_player"
             />
 
         <ImageView
@@ -200,9 +200,9 @@
             android:layout_marginEnd="@dimen/dp_16"
             android:layout_marginRight="@dimen/dp_16"
             android:layout_marginTop="@dimen/dp_8"
-            app:layout_constraintBottom_toBottomOf="@+id/image_song"
+            app:layout_constraintBottom_toBottomOf="@+id/image_song_player"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/image_song"
+            app:layout_constraintTop_toTopOf="@+id/image_song_player"
             app:srcCompat="@drawable/ic_next"
             tools:ignore="VectorDrawableCompat"
             />
@@ -211,7 +211,7 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/layout_album"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?attr/actionBarSize"
         android:layout_marginTop="@dimen/dp_8"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"

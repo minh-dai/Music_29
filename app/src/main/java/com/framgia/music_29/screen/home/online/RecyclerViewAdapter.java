@@ -2,7 +2,6 @@ package com.framgia.music_29.screen.home.online;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,7 +53,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         public ViewHodel(@NonNull View itemView) {
             super(itemView);
-            mImageSong = itemView.findViewById(R.id.image_song);
+            mImageSong = itemView.findViewById(R.id.image_song_player);
             mTextSongName = itemView.findViewById(R.id.text_song);
         }
 
