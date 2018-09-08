@@ -1,7 +1,9 @@
 package com.framgia.music_29.screen.genre;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.framgia.music_29.R;
 import com.framgia.music_29.data.model.Song;
+import com.framgia.music_29.screen.home.offline.OfflineFragment;
 import com.framgia.music_29.screen.home.online.OnlineFragment;
 import com.framgia.music_29.utils.ConstantApi;
 import com.framgia.music_29.utils.LoadMore;
@@ -25,10 +28,17 @@ public class GenreActivity extends AppCompatActivity
     private GenreAdapter mAdapter;
     private TextView mTextGenre;
     private ImageView mImageBack;
-    private ImageView mImageSearch;
     private RecyclerView mRecyclerGenre;
     private ProgressBar mProgressBar;
     private List<Song> mListSongs;
+
+    public static Intent getGenreIntent(Context context, String genre , List<Song> songs) {
+        Intent intent = new Intent(context, GenreActivity.class);
+        intent.putExtra(OnlineFragment.EXTRA_GENRE, genre);
+        intent.putParcelableArrayListExtra(OfflineFragment.EXTRA_LIST_GENRE,
+                (ArrayList<? extends Parcelable>) songs);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +52,6 @@ public class GenreActivity extends AppCompatActivity
 
     private void onCLickListenEvent() {
         mImageBack.setOnClickListener(this);
-        mImageSearch.setOnClickListener(this);
     }
 
     private void initComponent() {
@@ -54,28 +63,31 @@ public class GenreActivity extends AppCompatActivity
         mAdapter.setClickItemListener(this);
         mRecyclerGenre.setAdapter(mAdapter);
         mRecyclerGenre.setLayoutManager(new LinearLayoutManager(this));
-
-        mRecyclerGenre.addOnScrollListener(
-                new LoadMore((LinearLayoutManager) mRecyclerGenre.getLayoutManager()) {
-                    @Override
-                    protected void OnLoadMoreItem() {
-                        onLoadMore();
-                    }
-                });
     }
 
     private void initView() {
         mTextGenre = findViewById(R.id.text_genre);
         mImageBack = findViewById(R.id.image_back);
-        mImageSearch = findViewById(R.id.image_search_genre);
         mRecyclerGenre = findViewById(R.id.recyclerview_genre);
         mProgressBar = findViewById(R.id.progress_loadding);
     }
 
     private void setAdapterSongs() {
         String genre = getIntent().getStringExtra(OnlineFragment.EXTRA_GENRE);
-        mPesenter.loadDataForGenre(genre);
+        List<Song> songs = getIntent().getParcelableArrayListExtra(OfflineFragment.EXTRA_LIST_GENRE);
         setTitleActivity(genre);
+        if (!genre.equals(ConstantApi.GENRE_PLAYLIST)) {
+            mRecyclerGenre.addOnScrollListener(
+                    new LoadMore((LinearLayoutManager) mRecyclerGenre.getLayoutManager()) {
+                        @Override
+                        protected void OnLoadMoreItem() {
+                            onLoadMore();
+                        }
+                    });
+            mPesenter.loadDataForGenre(genre);
+        }else {
+            mAdapter.setSongs(songs , true);
+        }
         mProgressBar.setVisibility(View.GONE);
     }
 
@@ -111,6 +123,9 @@ public class GenreActivity extends AppCompatActivity
             case ConstantApi.GENRE_COUNTRY:
                 mTextGenre.setText(getString(R.string.genre_country));
                 break;
+            case ConstantApi.GENRE_PLAYLIST:
+                mTextGenre.setText(getString(R.string.favorite_songs));
+                break;
             default:
                 mTextGenre.setText("");
                 break;
@@ -133,8 +148,6 @@ public class GenreActivity extends AppCompatActivity
         switch (v.getId()) {
             case R.id.image_back:
                 onBackPressed();
-                break;
-            case R.id.image_search_genre:
                 break;
             default:
                 return;

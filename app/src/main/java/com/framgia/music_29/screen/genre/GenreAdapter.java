@@ -1,6 +1,7 @@
 package com.framgia.music_29.screen.genre;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ public class GenreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private static List<Song> mSongs;
     private Context mContext;
     private onClickItemListener mClickItemListener;
+    private boolean mLocal;
     private final int mViewTypeItem = 0, mViewTypeLoading = 1;
 
     public GenreAdapter(Context context) {
@@ -41,11 +43,17 @@ public class GenreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ItemViewHolder) {
             ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
-            itemViewHolder.bindView(mContext, mSongs.get(position), mClickItemListener);
+            itemViewHolder.bindView(mContext, mSongs.get(position), mLocal, mClickItemListener);
         } else {
             LoadingViewHolder loadingViewHolder = (LoadingViewHolder) holder;
             loadingViewHolder.mProgressBar.setIndeterminate(true);
         }
+    }
+
+    public void setSongs(List<Song> songs, Boolean local) {
+        mLocal = local;
+        mSongs = songs;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -53,7 +61,7 @@ public class GenreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return mSongs.get(position) == null ? mViewTypeLoading : mViewTypeItem;
     }
 
-    public void setClickItemListener(onClickItemListener clickItemListener) {
+    protected void setClickItemListener(onClickItemListener clickItemListener) {
         mClickItemListener = clickItemListener;
     }
 
@@ -67,29 +75,43 @@ public class GenreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return mSongs == null ? 0 : mSongs.size();
     }
 
-    public static class ItemViewHolder extends RecyclerView.ViewHolder
+    protected static class ItemViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
-        private ImageView mImageSong;
-        private TextView mTextSongName;
-        private TextView mTextSongUser;
-        private onClickItemListener mClickItemListener;
+        protected static ImageView mImageSong;
+        protected static TextView mTextSongName;
+        protected static TextView mTextSongUser;
+        protected onClickItemListener mClickItemListener;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
-
             mImageSong = itemView.findViewById(R.id.image_song);
             mTextSongName = itemView.findViewById(R.id.text_song_name);
             mTextSongUser = itemView.findViewById(R.id.text_song_user);
             itemView.setOnClickListener(this);
         }
 
-        public void bindView(Context context, Song song, onClickItemListener clickItemListener) {
+        public void bindView(Context context, Song song,boolean local,  onClickItemListener clickItemListener) {
             mTextSongUser.setText(song.getUserFullName());
             mTextSongName.setText(song.getTitle());
-            Picasso.with(context).load(song.getArtworkUrl()).
-                    placeholder(R.drawable.item_music).into(mImageSong);
+
+            if (!local) {
+                Picasso.with(context).load(song.getArtworkUrl()).
+                        placeholder(R.drawable.item_music).into(mImageSong);
+            }else {
+                setImageLocal(song);
+            }
+
             mClickItemListener = clickItemListener;
+        }
+
+        private void setImageLocal(Song song) {
+            if(song.getUriImage() != null) {
+                mImageSong.setImageBitmap(BitmapFactory.decodeByteArray(song.getUriImage(), 0,
+                        song.getUriImage().length));
+            }else {
+                mImageSong.setImageResource(R.drawable.item_music);
+            }
         }
 
         @Override

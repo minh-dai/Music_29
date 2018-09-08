@@ -11,8 +11,8 @@
 
     <ImageView
         android:id="@+id/image_song"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/dp_50"
+        android:layout_height="@dimen/dp_50"
         android:layout_marginBottom="@dimen/dp_16"
         android:layout_marginLeft="@dimen/dp_16"
         android:layout_marginStart="@dimen/dp_16"

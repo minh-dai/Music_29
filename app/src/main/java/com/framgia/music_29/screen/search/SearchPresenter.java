@@ -4,6 +4,7 @@ import com.framgia.music_29.BuildConfig;
 import com.framgia.music_29.data.model.Genre;
 import com.framgia.music_29.data.source.SongDataSource;
 import com.framgia.music_29.data.source.SongRepository;
+import com.framgia.music_29.data.source.local.SongLocalDataSoure;
 import com.framgia.music_29.data.source.remote.SongRemoteDataSource;
 import com.framgia.music_29.utils.ConstantApi;
 
@@ -12,7 +13,8 @@ public class SearchPresenter implements SearchContract.Presenter, SongDataSource
     private SearchContract.View mView;
 
     public SearchPresenter() {
-        mSongRepository = SongRepository.getInstance(SongRemoteDataSource.getInstance());
+        mSongRepository = SongRepository.getInstance(SongRemoteDataSource.getInstance(),
+                SongLocalDataSoure.getInstance());
     }
 
     @Override

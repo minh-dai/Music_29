@@ -31,4 +31,5 @@ public interface ConstantApi {
     String GENRE_AMBIENT = "ambient";
     String GENRE_CLASSICAL = "classical";
     String GENRE_COUNTRY = "country";
+    String GENRE_PLAYLIST = "PlayList";
 }

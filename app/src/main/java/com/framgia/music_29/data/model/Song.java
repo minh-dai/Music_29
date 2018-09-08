@@ -1,7 +1,10 @@
 package com.framgia.music_29.data.model;
 
+import android.database.Cursor;
+import android.media.MediaMetadataRetriever;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.provider.MediaStore;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,6 +18,25 @@ public class Song implements Parcelable {
     private boolean mStreamable;
     private String mDownloadUrl;
     private String mUserFullName;
+    private byte[] mUriImage;
+
+    public Song(String id, String title, String userFullName, byte[] uriImage, String artworkUrl) {
+        mArtworkUrl = artworkUrl;
+        mId = id;
+        mTitle = title;
+        mUriImage = uriImage;
+        mUserFullName = userFullName;
+    }
+
+    public Song(Cursor cursor) {
+        mId = String.valueOf(cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media._ID)));
+        mTitle = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+        mUserFullName = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+        mArtworkUrl = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+        MediaMetadataRetriever metaRetriver = new MediaMetadataRetriever();
+        metaRetriver.setDataSource(mArtworkUrl);
+        mUriImage = metaRetriver.getEmbeddedPicture();
+    }
 
     public Song(JSONObject track) throws JSONException {
         mId = String.valueOf(track.getLong(JSONKey.ID));
@@ -24,8 +46,7 @@ public class Song implements Parcelable {
         mStreamable = track.getBoolean(JSONKey.STREAM_ABLE);
         mDownloadUrl = track.getString(JSONKey.DOWNLOAD_URL);
         mUri = track.getString(JSONKey.URI);
-        mUserFullName =
-                track.getJSONObject(JSONKey.USER).getString(JSONKey.FULL_USER);
+        mUserFullName = track.getJSONObject(JSONKey.USER).getString(JSONKey.FULL_USER);
     }
 
     protected Song(Parcel in) {
@@ -37,6 +58,12 @@ public class Song implements Parcelable {
         mStreamable = in.readByte() != 0;
         mDownloadUrl = in.readString();
         mUserFullName = in.readString();
+        mUriImage = in.createByteArray();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     @Override
@@ -49,11 +76,7 @@ public class Song implements Parcelable {
         dest.writeByte((byte) (mStreamable ? 1 : 0));
         dest.writeString(mDownloadUrl);
         dest.writeString(mUserFullName);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
+        dest.writeByteArray(mUriImage);
     }
 
     public static final Creator<Song> CREATOR = new Creator<Song>() {
@@ -130,6 +153,14 @@ public class Song implements Parcelable {
 
     public void setUserFullName(String userFullName) {
         mUserFullName = userFullName;
+    }
+
+    public byte[] getUriImage() {
+        return mUriImage;
+    }
+
+    public void setUriImage(byte[] uriImage) {
+        mUriImage = uriImage;
     }
 
     public static class JSONKey {
