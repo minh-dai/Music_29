@@ -16,19 +16,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class GetDataApi extends AsyncTask<String, Exception, Genre> {
-
-    public static final String REQUEST = "GET";
-    public static final int TIME_OUT_CONNECT = 3000;
-    private final String mConllection = "collection";
-    private final String mTrack = "track";
-    private final String mNextHref = "next_href";
+public class GetSongAsyncTask extends AsyncTask<String , Exception , Genre> {
     private SongDataSource.CallBack mCallBack;
     private Genre mGenre;
 
-    public GetDataApi(Genre genre, SongDataSource.CallBack callBack) {
-        mGenre = genre;
+    public GetSongAsyncTask(Genre genre, SongDataSource.CallBack callBack) {
         mCallBack = callBack;
+        mGenre = genre;
     }
 
     @Override
@@ -58,15 +52,12 @@ public class GetDataApi extends AsyncTask<String, Exception, Genre> {
     }
 
     private List<Song> convertSong(String data) throws JSONException {
-        List<Song> mList = new ArrayList<>();
-        JSONObject object = new JSONObject(data);
-        mGenre.setUrl(object.getString(mNextHref));
-        JSONArray array = object.getJSONArray(mConllection);
+        List<Song> listSong = new ArrayList<>();
+        JSONArray array = new JSONArray(data);
         for (int i = 0; i < array.length(); ++i) {
-            JSONObject track = array.getJSONObject(i).getJSONObject(mTrack);
-            mList.add(parseJson(track));
+            listSong.add(parseJson(array.getJSONObject(i)));
         }
-        return mList;
+        return listSong;
     }
 
     private Song parseJson(JSONObject track) throws JSONException {
@@ -77,9 +68,9 @@ public class GetDataApi extends AsyncTask<String, Exception, Genre> {
     private String getDataFromUrl(String urlString) throws IOException {
         URL url = new URL(urlString);
         HttpsURLConnection mConnection = (HttpsURLConnection) url.openConnection();
-        mConnection.setRequestMethod(REQUEST);
-        mConnection.setConnectTimeout(TIME_OUT_CONNECT);
-        mConnection.setReadTimeout(TIME_OUT_CONNECT);
+        mConnection.setRequestMethod(GetDataApi.REQUEST);
+        mConnection.setConnectTimeout(GetDataApi.TIME_OUT_CONNECT);
+        mConnection.setReadTimeout(GetDataApi.TIME_OUT_CONNECT);
         mConnection.connect();
 
         InputStream inputStream = mConnection.getInputStream();
