@@ -5,11 +5,12 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/textAppName"
+        android:id="@+id/text_app_name"
         android:layout_width="0dp"
-        android:layout_height="@dimen/dp_48"
+        android:layout_height="?attr/actionBarSize"
         android:background="@color/color_primary"
         android:padding="@dimen/dp_8"
+        android:gravity="center_vertical"
         android:text="@string/name_music_app"
         android:textColor="@color/color_white"
         android:textSize="@dimen/sp_18"
@@ -21,12 +22,12 @@
     <ImageView
         android:id="@+id/image_search"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="?attr/actionBarSize"
         android:layout_alignParentRight="true"
         android:background="@color/color_primary"
         android:padding="@dimen/dp_8"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textAppName"
+        app:layout_constraintStart_toEndOf="@+id/text_app_name"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_menu_search"
         />
@@ -38,7 +39,7 @@
         app:layout_constraintBottom_toTopOf="@+id/tablayout_home"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textAppName"
+        app:layout_constraintTop_toBottomOf="@+id/text_app_name"
         />
     <android.support.design.widget.TabLayout
         android:id="@+id/tablayout_home"

@@ -18,4 +18,5 @@
     <string name="songs">Songs</string>
     <string name="album">Album</string>
     <string name="network_not_available">"Network not available"</string>
+    <string name="time_media">00:00</string>
 </resources>
