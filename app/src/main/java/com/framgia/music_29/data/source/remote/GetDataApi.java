@@ -22,6 +22,7 @@ public class GetDataApi extends AsyncTask<String, Exception, Genre> {
     private final String mTrack = "track";
     private final String mRequest = "GET";
     private final int mTimeOutConnect = 3000;
+    private final String mNextHref = "next_href";
     private SongDataSource.CallBack mCallBack;
     private Genre mGenre;
 
@@ -40,7 +41,7 @@ public class GetDataApi extends AsyncTask<String, Exception, Genre> {
         } catch (IOException e) {
             publishProgress(e);
         }
-        mGenre.setList(song);
+        mGenre.setSongs(song);
         return mGenre;
     }
 
@@ -59,6 +60,7 @@ public class GetDataApi extends AsyncTask<String, Exception, Genre> {
     private List<Song> convertSong(String data) throws JSONException {
         List<Song> mList = new ArrayList<>();
         JSONObject object = new JSONObject(data);
+        mGenre.setUrl(object.getString(mNextHref));
         JSONArray array = object.getJSONArray(mConllection);
         for (int i = 0; i < array.length(); ++i) {
             JSONObject track = array.getJSONObject(i).getJSONObject(mTrack);

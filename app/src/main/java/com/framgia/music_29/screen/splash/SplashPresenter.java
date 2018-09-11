@@ -56,9 +56,9 @@ public class SplashPresenter implements SplashContract.Presenter, SongDataSource
     @Override
     public void onDataLoaded(Genre genre) {
         if (genre.getName().equals(ConstantApi.GENRE_ALL_MUSIC)) {
-            mView.setDataMusics(genre.getList());
+            mView.setDataMusics(genre.getSongs());
         } else {
-            mView.setDataAudios(genre.getList());
+            mView.setDataAudios(genre.getSongs());
         }
         mView.checkList();
     }

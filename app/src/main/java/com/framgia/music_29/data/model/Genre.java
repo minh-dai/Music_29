@@ -4,12 +4,19 @@ import java.util.List;
 
 public class Genre {
     private String mName;
-    private List<Song> mList;
-    private String url;
+    private List<Song> mSongs;
+    private String mUrl;
+
+    public Genre() {
+    }
+
+    public Genre(String url) {
+        mUrl = url;
+    }
 
     public Genre(String name, String url) {
         mName = name;
-        this.url = url;
+        mUrl = url;
     }
 
     public String getName() {
@@ -21,19 +28,18 @@ public class Genre {
     }
 
     public String getUrl() {
-        return url;
+        return mUrl;
     }
 
     public void setUrl(String url) {
-        this.url = url;
+        mUrl = url;
     }
 
-    public List<Song> getList() {
-        return mList;
+    public List<Song> getSongs() {
+        return mSongs;
     }
 
-    public void setList(List<Song> list) {
-        mList = list;
+    public void setSongs(List<Song> songs) {
+        mSongs = songs;
     }
-
 }
