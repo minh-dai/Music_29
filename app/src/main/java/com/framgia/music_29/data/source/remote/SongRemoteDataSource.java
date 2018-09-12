@@ -17,4 +17,8 @@ public class SongRemoteDataSource {
     public void loadData(Genre genre, SongDataSource.CallBack callBack) {
         new GetDataApi(genre, callBack).execute(genre.getUrl());
     }
+
+    public void loadSong(Genre genre, SongDataSource.CallBack callBack){
+        new GetSongAsyncTask(genre, callBack).execute(genre.getUrl());
+    }
 }

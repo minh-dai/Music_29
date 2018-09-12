@@ -22,4 +22,9 @@ public class SongRepository implements SongDataSource {
     public void getDatas(Genre genre, CallBack callBack) {
         mSongRemoteDataSource.loadData(genre, callBack);
     }
+
+    @Override
+    public void getSongs(Genre genre, CallBack callBack) {
+        mSongRemoteDataSource.loadSong(genre , callBack);
+    }
 }

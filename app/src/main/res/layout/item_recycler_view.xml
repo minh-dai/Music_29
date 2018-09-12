@@ -5,7 +5,7 @@
     android:id="@+id/constraint_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/dp_3"
+    android:layout_marginTop="@dimen/dp_2"
     android:background="@color/color_white_gray"
     >
 
@@ -20,7 +20,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/item_music_app"
+        app:srcCompat="@drawable/item_music"
         tools:ignore="VectorDrawableCompat"
         />
 

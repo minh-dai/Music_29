@@ -11,4 +11,6 @@ public interface SongDataSource {
     }
 
     void getDatas(Genre genre, CallBack callBack);
+
+    void getSongs(Genre genre, CallBack callBack);
 }
