@@ -19,4 +19,7 @@
     <string name="album">Album</string>
     <string name="network_not_available">"Network not available"</string>
     <string name="time_media">00:00</string>
+    <string name="text_search">Search</string>
+    <string name="text_hint_search">Song Name</string>
+    <string name="not_find_data">Data not find</string>
 </resources>

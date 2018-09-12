@@ -25,7 +25,6 @@ public class GenreActivity extends AppCompatActivity
     private GenreAdapter mAdapter;
     private TextView mTextGenre;
     private ImageView mImageBack;
-    private ImageView mImageSearch;
     private RecyclerView mRecyclerGenre;
     private ProgressBar mProgressBar;
     private List<Song> mListSongs;
@@ -42,7 +41,6 @@ public class GenreActivity extends AppCompatActivity
 
     private void onCLickListenEvent() {
         mImageBack.setOnClickListener(this);
-        mImageSearch.setOnClickListener(this);
     }
 
     private void initComponent() {
@@ -67,7 +65,6 @@ public class GenreActivity extends AppCompatActivity
     private void initView() {
         mTextGenre = findViewById(R.id.text_genre);
         mImageBack = findViewById(R.id.image_back);
-        mImageSearch = findViewById(R.id.image_search_genre);
         mRecyclerGenre = findViewById(R.id.recyclerview_genre);
         mProgressBar = findViewById(R.id.progress_loadding);
     }
@@ -133,8 +130,6 @@ public class GenreActivity extends AppCompatActivity
         switch (v.getId()) {
             case R.id.image_back:
                 onBackPressed();
-                break;
-            case R.id.image_search_genre:
                 break;
             default:
                 return;

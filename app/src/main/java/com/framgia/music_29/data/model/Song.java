@@ -140,7 +140,7 @@ public class Song implements Parcelable {
         public static final String DOWNLOAD_URL = "download_url";
         public static final String URI = "uri";
         public static final String USER = "user";
-        public static final String FULL_USER = "full_name";
+        public static final String FULL_USER = "username";
         public static final String STREAM_ABLE = "streamable";
     }
 }

@@ -42,20 +42,9 @@
         android:text="@string/app_name"
         android:textColor="@color/color_white"
         android:textSize="@dimen/sp_18"
-        app:layout_constraintEnd_toStartOf="@+id/image_search_genre"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/image_back"
         app:layout_constraintTop_toTopOf="parent"
-        />
-
-    <ImageView
-        android:id="@+id/image_search_genre"
-        android:layout_width="@dimen/dp_48"
-        android:layout_height="@dimen/dp_48"
-        android:background="@color/color_primary"
-        android:padding="@dimen/dp_10"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_search"
         />
 
     <android.support.v7.widget.RecyclerView
