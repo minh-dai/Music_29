@@ -5,7 +5,7 @@ import com.framgia.music_29.BasePresenter;
 public interface PlayerContract {
 
     interface Presenter extends BasePresenter<View>{
-
+        boolean isExternalStorageReadable();
     }
 
     interface View{

@@ -38,6 +38,7 @@ public class Song implements Parcelable {
         mArtworkUrl = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
         MediaMetadataRetriever metaRetriver = new MediaMetadataRetriever();
         metaRetriver.setDataSource(mArtworkUrl);
+        mStreamable = true;
         mUriImage = metaRetriver.getEmbeddedPicture();
     }
 

@@ -8,4 +8,9 @@
         <item name="colorAccent">@color/color_accent</item>
     </style>
 
+    <style name="SeekBarColor"
+        parent="Widget.AppCompat.SeekBar">
+        <item name="colorAccent">@color/color_home_red</item>
+    </style>
+
 </resources>

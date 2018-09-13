@@ -92,8 +92,8 @@ public class GenreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
 
         public void bindView(Context context, Song song,boolean local,  onClickItemListener clickItemListener) {
-            mTextSongUser.setText(song.getUserFullName());
-            mTextSongName.setText(song.getTitle());
+            mTextSongUser.setText(song.getUserFullName().trim());
+            mTextSongName.setText(song.getTitle().trim());
 
             if (!local) {
                 Picasso.with(context).load(song.getArtworkUrl()).

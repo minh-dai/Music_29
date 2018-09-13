@@ -15,11 +15,14 @@ import android.widget.TextView;
 import com.framgia.music_29.R;
 import com.framgia.music_29.data.model.Song;
 import com.framgia.music_29.screen.genre.GenreActivity;
+import com.framgia.music_29.screen.player.PlayerActivity;
+import com.framgia.music_29.screen.service.MusicService;
 import com.framgia.music_29.utils.ConstantApi;
+import com.framgia.music_29.utils.OnClickItemListener;
 import java.util.List;
 
 public class OnlineFragment extends Fragment
-        implements OnlineFragmentContract.View, View.OnClickListener {
+        implements OnlineFragmentContract.View, View.OnClickListener , OnClickItemListener{
 
     public static final String EXTRA_GENRE = "com.framgia.music_29.EXTRA_GENRE";
     private RecyclerViewAdapter mAdapterMusics;
@@ -95,6 +98,8 @@ public class OnlineFragment extends Fragment
 
         mAdapterMusics = new RecyclerViewAdapter(getContext());
         mAdapterAudios = new RecyclerViewAdapter(getContext());
+        mAdapterAudios.setClickItemListener(this);
+        mAdapterMusics.setClickItemListener(this);
     }
 
     private void setDataListGenres() {
@@ -134,8 +139,12 @@ public class OnlineFragment extends Fragment
     }
 
     private void onStartGenreAvtivity(String genre) {
-        Intent intent = new Intent(getContext(), GenreActivity.class);
-        intent.putExtra(EXTRA_GENRE, genre);
-        startActivity(intent);
+        startActivity(GenreActivity.getGenreIntent(getContext() , genre));
+    }
+
+    @Override
+    public void onClick(List<Song> songs, int position) {
+        startActivity(PlayerActivity.getPlayerIntent(getContext(), songs.get(position)));
+        getContext().startService(MusicService.getInstance(getContext(), songs, position));
     }
 }

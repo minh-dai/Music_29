@@ -34,12 +34,21 @@ public class GenreActivity extends AppCompatActivity
     private RecyclerView mRecyclerGenre;
     private ProgressBar mProgressBar;
     private List<Song> mListSongs;
+    private static boolean mLocal;
 
-    public static Intent getGenreIntent(Context context, String genre , List<Song> songs) {
+    public static Intent getGenreIntent(Context context, String genre) {
+        Intent intent = new Intent(context, GenreActivity.class);
+        intent.putExtra(OnlineFragment.EXTRA_GENRE, genre);
+        return intent;
+    }
+
+    public static Intent getGenreIntent(Context context, String genre, boolean local,
+            List<Song> songs) {
         Intent intent = new Intent(context, GenreActivity.class);
         intent.putExtra(OnlineFragment.EXTRA_GENRE, genre);
         intent.putParcelableArrayListExtra(OfflineFragment.EXTRA_LIST_GENRE,
                 (ArrayList<? extends Parcelable>) songs);
+        mLocal = local;
         return intent;
     }
 
@@ -77,7 +86,8 @@ public class GenreActivity extends AppCompatActivity
 
     private void setAdapterSongs() {
         String genre = getIntent().getStringExtra(OnlineFragment.EXTRA_GENRE);
-        List<Song> songs = getIntent().getParcelableArrayListExtra(OfflineFragment.EXTRA_LIST_GENRE);
+        List<Song> songs =
+                getIntent().getParcelableArrayListExtra(OfflineFragment.EXTRA_LIST_GENRE);
         setTitleActivity(genre);
         if (!genre.equals(ConstantApi.GENRE_PLAYLIST)) {
             mRecyclerGenre.addOnScrollListener(
@@ -88,8 +98,8 @@ public class GenreActivity extends AppCompatActivity
                         }
                     });
             mPesenter.loadDataForGenre(genre);
-        }else {
-            mAdapter.setSongs(songs , true);
+        } else {
+            mAdapter.setSongs(songs, true);
         }
         mProgressBar.setVisibility(View.GONE);
     }
@@ -151,6 +161,7 @@ public class GenreActivity extends AppCompatActivity
         switch (v.getId()) {
             case R.id.image_back:
                 onBackPressed();
+                finish();
                 break;
             default:
                 return;
@@ -159,8 +170,13 @@ public class GenreActivity extends AppCompatActivity
 
     @Override
     public void onClick(List<Song> songs, int position) {
-        startActivity(PlayerActivity.getPlayerIntent(this , songs.get(position)));
-        startService(MusicService.getInstance(this, songs, position));
+        if (mLocal) {
+            startActivity(PlayerActivity.getPlayerIntent(this, songs.get(position), mLocal));
+            startService(MusicService.getInstance(this, mLocal, songs, position));
+        } else {
+            startActivity(PlayerActivity.getPlayerIntent(this, songs.get(position)));
+            startService(MusicService.getInstance(this, songs, position));
+        }
     }
 
     @Override

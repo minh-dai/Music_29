@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -11,13 +12,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.framgia.music_29.BuildConfig;
 import com.framgia.music_29.R;
 import com.framgia.music_29.data.model.Song;
 import com.framgia.music_29.screen.genre.GenreActivity;
 import com.framgia.music_29.screen.service.MusicService;
+import com.framgia.music_29.utils.Constant;
+import com.framgia.music_29.utils.ConstantApi;
 import com.squareup.picasso.Picasso;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -34,14 +39,15 @@ public class PlayerActivity extends AppCompatActivity
     private ImageView mImageLoop;
     private ImageView mImageShuffle;
     private ImageView mImageSong;
-    private ImageButton mButtonPre;
-    private ImageButton mButtonPlay;
-    private ImageButton mButtonNext;
+    private ImageView mButtonPre;
+    private ImageView mButtonPlay;
+    private ImageView mButtonNext;
     private ImageView mButtonBack;
     private TextView mTextSongName;
     private TextView mTextCurrentTime;
     private TextView mTextEndTime;
     private SeekBar mSeekBarSong;
+    private ProgressBar mProgressBar;
     private MusicService mService;
     private Song mSong;
     private boolean mIsBound = false;
@@ -52,8 +58,16 @@ public class PlayerActivity extends AppCompatActivity
     private final int mDefaultTimeDelay = 1000;
     private final String mTypeTimeSong = "mm:ss";
     private final int mDefualtTimeSeebar = 0;
+    private static boolean mLocal;
 
     public static Intent getPlayerIntent(Context context, Song song) {
+        Intent intent = new Intent(context, PlayerActivity.class);
+        intent.putExtra(GenreActivity.EXTRA_SONG, song);
+        return intent;
+    }
+
+    public static Intent getPlayerIntent(Context context, Song song, boolean local) {
+        mLocal = local;
         Intent intent = new Intent(context, PlayerActivity.class);
         intent.putExtra(GenreActivity.EXTRA_SONG, song);
         return intent;
@@ -81,6 +95,7 @@ public class PlayerActivity extends AppCompatActivity
     }
 
     private void initViews() {
+        mProgressBar = findViewById(R.id.progress_bar_player);
         mButtonBack = findViewById(R.id.button_back);
         mButtonPre = findViewById(R.id.button_pre);
         mButtonPlay = findViewById(R.id.button_play);
@@ -111,12 +126,32 @@ public class PlayerActivity extends AppCompatActivity
     private void setContextComponent(Song song) {
         if (song != null) {
             mSong = song;
-            mTextSongName.setText(song.getTitle());
-            Picasso.with(this)
-                    .load(song.getArtworkUrl())
-                    .placeholder(R.drawable.item_music_app)
-                    .into(mImageSong);
+            mTextSongName.setText(song.getTitle().trim());
+            mProgressBar.setVisibility(View.VISIBLE);
+            if (!mSong.isDownloadable()){
+                mImageDownload.setVisibility(View.GONE);
+            }
+            if (mLocal){
+                mImageDownload.setVisibility(View.GONE);
+                byte[] images = song.getUriImage();
+                if (images == null) {
+                    mImageSong.setImageResource(R.drawable.item_music);
+                } else {
+                    mImageSong.setImageBitmap(BitmapFactory.decodeByteArray(images, 0, song.getUriImage().length));
+                }
+            }else {
+                Picasso.with(this)
+                        .load(pareString(mSong.getArtworkUrl()))
+                        .placeholder(R.drawable.item_music_app)
+                        .into(mImageSong);
+            }
         }
+    }
+
+    private String pareString(String url){
+        if (url.equals(getString(R.string.string_null)))
+            return getString(R.string.string_null);
+        return url.substring( 0, url.lastIndexOf("-")) + Constant.IMAGE_SONG;
     }
 
     @Override
@@ -141,7 +176,7 @@ public class PlayerActivity extends AppCompatActivity
                 mService.onFavoriteSong();
                 break;
             case R.id.image_download:
-                mService.onDownloadSong();
+                checkExternal();
                 break;
             case R.id.image_loop:
                 setImageLoop();
@@ -153,6 +188,14 @@ public class PlayerActivity extends AppCompatActivity
                 break;
             default:
                 return;
+        }
+    }
+
+    private void checkExternal() {
+        if (mPresenter.isExternalStorageReadable()) {
+            mService.onDownloadSong(mSong.getUri() + ConstantApi.PLAY_URL, this);
+        }else {
+            Toast.makeText(this , getString(R.string.song_download) , Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -176,9 +219,9 @@ public class PlayerActivity extends AppCompatActivity
     @Override
     public void setImageShuffle() {
         if (!mIsRandom) {
-            mImageShuffle.setImageResource(R.drawable.ic_loop_green);
+            mImageShuffle.setImageResource(R.drawable.ic_loop_red);
         } else {
-            mImageShuffle.setImageResource(R.drawable.ic_loop_while);
+            mImageShuffle.setImageResource(R.drawable.ic_loop_black);
         }
         mIsRandom = !mIsRandom;
     }
@@ -186,9 +229,9 @@ public class PlayerActivity extends AppCompatActivity
     @Override
     public void setImagePauseSong() {
         if (!mIsPlay) {
-            mButtonPlay.setImageResource(android.R.drawable.ic_media_pause);
+            mButtonPlay.setImageResource(R.drawable.ic_media_pause);
         } else {
-            mButtonPlay.setImageResource(android.R.drawable.ic_media_play);
+            mButtonPlay.setImageResource(R.drawable.ic_media_play);
         }
         mIsPlay = !mIsPlay;
     }
@@ -196,9 +239,9 @@ public class PlayerActivity extends AppCompatActivity
     @Override
     public void setImageLoop() {
         if (!mIsLoop) {
-            mImageLoop.setImageResource(R.drawable.ic_random_green);
+            mImageLoop.setImageResource(R.drawable.ic_random_red);
         } else {
-            mImageLoop.setImageResource(R.drawable.ic_random_while);
+            mImageLoop.setImageResource(R.drawable.ic_random_black);
         }
         mIsLoop = !mIsLoop;
     }
@@ -285,6 +328,11 @@ public class PlayerActivity extends AppCompatActivity
     }
 
     @Override
+    public void setVisibilityProgressBar() {
+        mProgressBar.setVisibility(View.GONE);
+    }
+
+    @Override
     public void setImagePlay(String status) {
         switch (status) {
             case ACTION_MEDIA_PAUSE:
@@ -308,5 +356,4 @@ public class PlayerActivity extends AppCompatActivity
         mTextCurrentTime.setText(convertToTime(current));
         mTextEndTime.setText(convertToTime(endTime));
     }
-
 }

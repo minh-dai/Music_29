@@ -5,6 +5,8 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
@@ -12,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.widget.RemoteViews;
 import com.framgia.music_29.R;
 import com.framgia.music_29.data.model.Song;
+import com.framgia.music_29.data.source.remote.DownloadDataSource;
 import com.framgia.music_29.screen.player.IUpdateUi;
 import com.framgia.music_29.screen.player.PlayerActivity;
 import com.squareup.picasso.Picasso;
@@ -29,11 +32,19 @@ public class MusicService extends Service implements onStatusListener {
     private RemoteViews mRemoteViews;
     private static MusicMediaPlayer mMusicMediaPlayer;
     private Intent mIntent;
+    private static boolean mLocal;
     private static final int ID_NOTIFICATION = 1;
 
     public static Intent getInstance(Context context, List<Song> songs, int position) {
         Intent intent = new Intent(context, MusicService.class);
-        mMusicMediaPlayer = MusicMediaPlayer.getInstant(songs , position);
+        mMusicMediaPlayer = MusicMediaPlayer.getInstant(songs, position);
+        return intent;
+    }
+
+    public static Intent getInstance(Context context,boolean local ,List<Song> songs, int position) {
+        mLocal = local;
+        Intent intent = new Intent(context, MusicService.class);
+        mMusicMediaPlayer = MusicMediaPlayer.getInstant(songs, position , local);
         return intent;
     }
 
@@ -71,19 +82,19 @@ public class MusicService extends Service implements onStatusListener {
         return START_STICKY;
     }
 
-    public void onDownloadSong() {
-
+    public void onDownloadSong(String url , Context context) {
+        new DownloadDataSource(context).execute(url);
     }
 
     public void onFavoriteSong() {
 
     }
 
-    public void getDuration(){
+    public void getDuration() {
         mMusicMediaPlayer.getTextDuration();
     }
 
-    public void setInterface(IUpdateUi iUpdateUi){
+    public void setInterface(IUpdateUi iUpdateUi) {
         mMusicMediaPlayer.setIUpdateUi(iUpdateUi);
     }
 
@@ -101,9 +112,9 @@ public class MusicService extends Service implements onStatusListener {
     @Override
     public void onPauseMedia() {
         mMusicMediaPlayer.pauseMedia();
-        if (mMusicMediaPlayer.isPlay()){
+        if (mMusicMediaPlayer.isPlay()) {
             updateNotification(mMusicMediaPlayer.getSong(), true);
-        }else {
+        } else {
             updateNotification(mMusicMediaPlayer.getSong(), false);
         }
     }
@@ -141,7 +152,6 @@ public class MusicService extends Service implements onStatusListener {
         mMusicMediaPlayer.setSeekTo(seekBarProgress);
     }
 
-
     @Override
     public boolean isPlay() {
         return mMusicMediaPlayer.isPlay();
@@ -169,11 +179,20 @@ public class MusicService extends Service implements onStatusListener {
                     android.R.drawable.ic_media_pause);
         }
 
-        Picasso.with(getApplicationContext())
-                .load(song.getArtworkUrl())
-                .placeholder(R.drawable.item_music)
-                .into(mRemoteViews, R.id.image_notification, ID_NOTIFICATION, mNotification);
-
+        if (mLocal){
+            byte[] images = song.getUriImage();
+            if(images != null){
+                Bitmap bitmap = BitmapFactory.decodeByteArray(images, 0, images.length);
+                mRemoteViews.setImageViewBitmap(R.id.image_notification, bitmap);
+            }else {
+                mRemoteViews.setImageViewResource(R.id.image_notification, R.drawable.item_music);
+            }
+        }else {
+            Picasso.with(getApplicationContext())
+                    .load(song.getArtworkUrl())
+                    .placeholder(R.drawable.item_music)
+                    .into(mRemoteViews, R.id.image_notification, ID_NOTIFICATION, mNotification);
+        }
         mIntent.putExtra(EXTRA_SONG, mMusicMediaPlayer.getSong());
         PendingIntent pIntent =
                 PendingIntent.getActivities(this, ID_NOTIFICATION, new Intent[] { mIntent },

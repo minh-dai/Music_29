@@ -2,6 +2,7 @@ package com.framgia.music_29.screen.home.offline;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.framgia.music_29.R;
 import com.framgia.music_29.data.model.Song;
@@ -22,6 +24,7 @@ public class OfflineFragment extends Fragment
 
     public static String EXTRA_LIST_GENRE = "com.framgia.music_29.EXTRA_LIST_GENRE";
     private OfflineFragmentContract.Presenter mPresenter;
+    private ProgressBar mProgressBar;
 
     public static OfflineFragment newInstance() {
         return new OfflineFragment();
@@ -48,6 +51,7 @@ public class OfflineFragment extends Fragment
     }
 
     private void registerEventListener(View view) {
+        mProgressBar = view.findViewById(R.id.progress_bar);
         view.findViewById(R.id.layout_favotite).setOnClickListener(this);
         view.findViewById(R.id.layout_playlist).setOnClickListener(this);
         view.findViewById(R.id.layout_song).setOnClickListener(this);
@@ -56,19 +60,24 @@ public class OfflineFragment extends Fragment
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.layout_favotite:
-                mPresenter.loadDataFavorite();
-                break;
-            case R.id.layout_playlist:
-                mPresenter.loadDataPlaylist(getContext());
-                break;
-            case R.id.layout_song:
-                mPresenter.loadDataDownload();
-                break;
-            case R.id.layout_album:
-                mPresenter.loadDataAlbum();
-                break;
+        if (isExternalStorageReadable()) {
+            switch (v.getId()) {
+                case R.id.layout_favotite:
+                    mPresenter.loadDataFavorite();
+                    break;
+                case R.id.layout_playlist:
+                    mProgressBar.setVisibility(View.VISIBLE);
+                    mPresenter.loadDataPlaylist(getContext());
+                    break;
+                case R.id.layout_song:
+                    mPresenter.loadDataDownload();
+                    break;
+                case R.id.layout_album:
+                    mPresenter.loadDataAlbum();
+                    break;
+            }
+        }else {
+            Toast.makeText(getActivity() , getString(R.string.not_find_data) , Toast.LENGTH_SHORT ).show();
         }
     }
 
@@ -98,6 +107,16 @@ public class OfflineFragment extends Fragment
     }
 
     private void onStartGenreAvtivity(List<Song> songs, String genre) {
-        startActivity(GenreActivity.getGenreIntent(getContext() , genre, songs));
+        mProgressBar.setVisibility(View.GONE);
+        startActivity(GenreActivity.getGenreIntent(getContext() , genre,true, songs));
+    }
+
+    public boolean isExternalStorageReadable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state) ||
+                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+            return true;
+        }
+        return false;
     }
 }

@@ -31,7 +31,7 @@ public class DownloadDataSource extends AsyncTask<String, Exception, String> {
         } catch (IOException e) {
             publishProgress(e);
         }
-        return null;
+        return "";
     }
 
     private void downLoadSong(String link) throws IOException {
@@ -73,6 +73,9 @@ public class DownloadDataSource extends AsyncTask<String, Exception, String> {
         super.onPostExecute(s);
         if (s.equals(mDone)) {
             Toast.makeText(mContext, mContext.getString(R.string.download), Toast.LENGTH_SHORT)
+                    .show();
+        }else {
+            Toast.makeText(mContext, mContext.getString(R.string.song_download), Toast.LENGTH_SHORT)
                     .show();
         }
     }

@@ -9,9 +9,9 @@
     <ImageView
         android:id="@+id/button_back"
         android:layout_width="@dimen/dp_40"
-        android:padding="@dimen/dp_8"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/color_home_red"
+        android:padding="@dimen/dp_8"
         android:src="@drawable/ic_back"
         />
 
@@ -21,8 +21,8 @@
         android:layout_height="?attr/actionBarSize"
         android:layout_centerVertical="true"
         android:background="@color/color_home_red"
-        android:maxLength="15"
         android:gravity="center_vertical"
+        android:maxLength="20"
         android:maxLines="2"
         android:paddingLeft="@dimen/dp_8"
         android:textColor="@color/color_white"
@@ -38,13 +38,14 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="@dimen/dp_32"
-        android:layout_marginEnd="@dimen/dp_16"
+        android:layout_marginEnd="@dimen/dp_8"
         android:layout_marginLeft="@dimen/dp_8"
-        android:layout_marginRight="@dimen/dp_16"
+        android:layout_marginRight="@dimen/dp_8"
         android:layout_marginStart="@dimen/dp_8"
         android:layout_marginTop="@dimen/dp_16"
+        android:padding="@dimen/dp_16"
         app:layout_constraintBottom_toTopOf="@+id/text_time_current"
-        app:layout_constraintEnd_toStartOf="@+id/image_favorite_song"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_back"
         app:srcCompat="@drawable/item_music"
@@ -62,7 +63,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/button_pre"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/button_pre"
-        app:srcCompat="@drawable/ic_loop_while"
+        app:srcCompat="@drawable/ic_loop_black"
         tools:ignore="VectorDrawableCompat"
         />
 
@@ -77,23 +78,27 @@
         app:layout_constraintBottom_toBottomOf="@+id/button_next"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/button_next"
-        app:srcCompat="@drawable/ic_random_while"
+        app:srcCompat="@drawable/ic_random_black"
         tools:ignore="VectorDrawableCompat"
         />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/button_pre"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/dp_16"
+        android:layout_marginEnd="10dp"
         android:layout_marginLeft="@dimen/dp_24"
+        android:layout_marginRight="10dp"
         android:layout_marginStart="@dimen/dp_24"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button_play"
         app:layout_constraintStart_toEndOf="@+id/image_random"
-        app:srcCompat="@android:drawable/ic_media_previous"
+        app:srcCompat="@drawable/ic_media_pre"
+        tools:ignore="VectorDrawableCompat"
         />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/button_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -106,19 +111,24 @@
         app:layout_constraintEnd_toStartOf="@+id/button_next"
         app:layout_constraintHorizontal_bias="0.428"
         app:layout_constraintStart_toEndOf="@+id/button_pre"
-        app:srcCompat="@android:drawable/ic_media_pause"
+        app:srcCompat="@drawable/ic_media_pause"
+        tools:ignore="VectorDrawableCompat"
         />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/button_next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/dp_16"
         android:layout_marginEnd="@dimen/dp_24"
+        android:layout_marginLeft="10dp"
         android:layout_marginRight="@dimen/dp_24"
+        android:layout_marginStart="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/image_loop"
-        app:srcCompat="@android:drawable/ic_media_next"
+        app:layout_constraintStart_toEndOf="@+id/button_play"
+        app:srcCompat="@drawable/ic_media_next"
+        tools:ignore="VectorDrawableCompat"
         />
 
     <TextView
@@ -129,6 +139,7 @@
         android:layout_marginLeft="@dimen/dp_8"
         android:layout_marginStart="@dimen/dp_8"
         android:text="@string/time_media"
+        android:textColor="@color/color_black"
         app:layout_constraintBottom_toTopOf="@+id/seekbar_song"
         app:layout_constraintStart_toStartOf="parent"
         />
@@ -141,6 +152,7 @@
         android:layout_marginEnd="@dimen/dp_8"
         android:layout_marginRight="@dimen/dp_8"
         android:text="@string/time_media"
+        android:textColor="@color/color_black"
         app:layout_constraintBottom_toTopOf="@+id/seekbar_song"
         app:layout_constraintEnd_toEndOf="parent"
         />
@@ -154,33 +166,45 @@
         android:layout_marginLeft="@dimen/dp_8"
         android:layout_marginRight="@dimen/dp_8"
         android:layout_marginStart="@dimen/dp_8"
+        android:theme="@style/SeekBarColor"
         app:layout_constraintBottom_toTopOf="@+id/button_play"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         />
     <ImageView
         android:id="@+id/image_favorite_song"
-        android:layout_width="@dimen/dp_40"
-        android:layout_height="@dimen/dp_40"
+        android:layout_width="@dimen/dp_25"
+        android:layout_height="@dimen/dp_25"
         android:layout_marginBottom="@dimen/dp_16"
-        android:layout_marginEnd="@dimen/dp_8"
-        android:layout_marginRight="@dimen/dp_8"
-        app:layout_constraintBottom_toTopOf="@+id/image_download"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/dp_24"
+        android:layout_marginRight="@dimen/dp_24"
+        app:layout_constraintBottom_toTopOf="@+id/seekbar_song"
+        app:layout_constraintEnd_toStartOf="@+id/image_download"
         app:srcCompat="@drawable/ic_like_white"
         tools:ignore="VectorDrawableCompat"
         />
     <ImageView
         android:id="@+id/image_download"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/dp_25"
+        android:layout_height="@dimen/dp_25"
         android:layout_marginBottom="@dimen/dp_16"
-        android:layout_marginEnd="@dimen/dp_8"
-        android:layout_marginRight="@dimen/dp_8"
-        app:layout_constraintBottom_toTopOf="@+id/text_time_end"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="@dimen/dp_24"
+        android:layout_marginRight="@dimen/dp_24"
+        app:layout_constraintBottom_toTopOf="@+id/seekbar_song"
+        app:layout_constraintEnd_toStartOf="@+id/text_time_end"
         app:srcCompat="@drawable/ic_download"
         tools:ignore="VectorDrawableCompat"
+        />
+    <ProgressBar
+        android:id="@+id/progress_bar_player"
+        android:layout_width="@dimen/dp_25"
+        android:layout_height="@dimen/dp_25"
+        android:layout_marginLeft="@dimen/dp_24"
+        android:layout_marginStart="@dimen/dp_24"
+        app:layout_constraintBottom_toBottomOf="@+id/text_time_current"
+        app:layout_constraintStart_toEndOf="@+id/text_time_current"
+        app:layout_constraintTop_toTopOf="@+id/text_time_current"
+        style="?android:attr/progressBarStyle"
         />
 
 </android.support.constraint.ConstraintLayout>

@@ -9,4 +9,5 @@ public interface IUpdateUi {
 
     void setSong(Song song);
 
+    void setVisibilityProgressBar();
 }

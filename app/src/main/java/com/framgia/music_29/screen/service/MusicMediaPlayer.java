@@ -15,14 +15,23 @@ public class MusicMediaPlayer {
     private static List<Song> mSongs;
     private static int mPosition;
     private Song mSong;
+    private static boolean mIsLocal;
     private boolean mIsRandom;
     private final int mDefualtRandom = 0;
     private IUpdateUi mIUpdateUi;
     private static MusicMediaPlayer mInstant;
 
     public static MusicMediaPlayer getInstant(List<Song> songs, int position) {
-        if (mInstant == null){
-            mInstant = new MusicMediaPlayer(songs , position);
+        if (mInstant == null) {
+            mInstant = new MusicMediaPlayer(songs, position);
+        }
+        return mInstant;
+    }
+
+    public static MusicMediaPlayer getInstant(List<Song> songs, int position, boolean local) {
+        mIsLocal = local;
+        if (mInstant == null) {
+            mInstant = new MusicMediaPlayer(songs, position);
         }
         return mInstant;
     }
@@ -33,6 +42,14 @@ public class MusicMediaPlayer {
         mSong = mSongs.get(mPosition);
     }
 
+    public void setSongs(List<Song> mSongs) {
+        MusicMediaPlayer.mSongs = mSongs;
+    }
+
+    public void setLocal(boolean local) {
+        mIsLocal = local;
+    }
+
     public void setIUpdateUi(IUpdateUi IUpdateUi) {
         mIUpdateUi = IUpdateUi;
     }
@@ -41,7 +58,7 @@ public class MusicMediaPlayer {
         return mSong;
     }
 
-    public void onStartMedia(){
+    public void onStartMedia() {
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mMediaPlayer.setOnPreparedListener(mOnPrepare);
@@ -61,7 +78,12 @@ public class MusicMediaPlayer {
         mPosition = mSongs.indexOf(song);
         if (mSong.isStreamable()) {
             try {
-                String url = mSong.getUri() + ConstantApi.PLAY_URL;
+                String url;
+                if (!mIsLocal) {
+                    url = mSong.getUri() + ConstantApi.PLAY_URL;
+                } else {
+                    url = mSong.getArtworkUrl();
+                }
                 mMediaPlayer.reset();
                 mMediaPlayer.setDataSource(url);
                 mMediaPlayer.prepareAsync();
@@ -77,7 +99,12 @@ public class MusicMediaPlayer {
     public void playMediaPre() {
         if (mSong.isStreamable()) {
             try {
-                String url = mSong.getUri() + ConstantApi.PLAY_URL;
+                String url;
+                if (!mIsLocal) {
+                    url = mSong.getUri() + ConstantApi.PLAY_URL;
+                } else {
+                    url = mSong.getArtworkUrl();
+                }
                 mMediaPlayer.reset();
                 mMediaPlayer.setDataSource(url);
                 mMediaPlayer.prepareAsync();
@@ -122,7 +149,7 @@ public class MusicMediaPlayer {
     }
 
     public void getTextDuration() {
-        mIUpdateUi.setTextTime(mMediaPlayer.getCurrentPosition() , mMediaPlayer.getDuration());
+        mIUpdateUi.setTextTime(mMediaPlayer.getCurrentPosition(), mMediaPlayer.getDuration());
     }
 
     public void loopMedia() {
@@ -137,10 +164,10 @@ public class MusicMediaPlayer {
         if (!mIsRandom) {
             Random r = new Random();
             int random = r.nextInt(mSongs.size() - 1) + mDefualtRandom;
-            if (mPosition != random){
+            if (mPosition != random) {
                 mPosition = random;
                 mIsRandom = !mIsRandom;
-            }else {
+            } else {
                 randomMedia();
             }
         }
@@ -151,6 +178,7 @@ public class MusicMediaPlayer {
         public void onPrepared(MediaPlayer mediaPlayer) {
             mIUpdateUi.setSong(mSong);
             mIUpdateUi.setImagePlay(PlayerActivity.ACTION_MEDIA_START);
+            mIUpdateUi.setVisibilityProgressBar();
             mediaPlayer.start();
         }
     };
@@ -163,7 +191,7 @@ public class MusicMediaPlayer {
         }
     };
 
-    public void stopMedia(){
+    public void stopMedia() {
         mMediaPlayer.stop();
         mMediaPlayer.release();
         mMediaPlayer = null;
