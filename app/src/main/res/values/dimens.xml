@@ -19,4 +19,10 @@
     <dimen name="sp_12">12sp</dimen>
     <dimen name="dp_32">32dp</dimen>
     <dimen name="dp_3">3dp</dimen>
+    <dimen name="dp_30">30dp</dimen>
+    <dimen name="sp_14">14sp</dimen>
+    <dimen name="sp_16">16sp</dimen>
+    <dimen name="dp_12">12dp</dimen>
+    <dimen name="dp_70">70dp</dimen>
+    <dimen name="dp_1">1dp</dimen>
 </resources>

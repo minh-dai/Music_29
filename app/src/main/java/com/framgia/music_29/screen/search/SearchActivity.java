@@ -2,11 +2,13 @@ package com.framgia.music_29.screen.search;
 
 import android.content.Context;
 import android.content.Intent;
+import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -81,6 +83,11 @@ public class SearchActivity extends AppCompatActivity
     }
 
     private void searchSong() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
         mImageFail.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
         mPresenter.loadSongsSearch(mEditSearch.getText().toString());
