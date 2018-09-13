@@ -19,7 +19,7 @@ import org.json.JSONObject;
 public class GetDataApi extends AsyncTask<String, Exception, Genre> {
 
     public static final String REQUEST = "GET";
-    public static final int TIME_OUT_CONNECT = 3000;
+    public static final int TIME_OUT_CONNECT = 5000;
     private final String mConllection = "collection";
     private final String mTrack = "track";
     private final String mNextHref = "next_href";

@@ -37,7 +37,7 @@ public class PlayerActivity extends AppCompatActivity
     private ImageButton mButtonPre;
     private ImageButton mButtonPlay;
     private ImageButton mButtonNext;
-    private ImageButton mButtonBack;
+    private ImageView mButtonBack;
     private TextView mTextSongName;
     private TextView mTextCurrentTime;
     private TextView mTextEndTime;

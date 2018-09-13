@@ -22,9 +22,9 @@
 
     <ImageView
         android:id="@+id/image_back"
-        android:layout_width="@dimen/dp_48"
-        android:layout_height="@dimen/dp_48"
-        android:background="@color/color_primary"
+        android:layout_width="@dimen/dp_40"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/color_home_red"
         android:padding="@dimen/dp_10"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -35,8 +35,8 @@
     <TextView
         android:id="@+id/text_genre"
         android:layout_width="0dp"
-        android:layout_height="@dimen/dp_48"
-        android:background="@color/color_primary"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/color_home_red"
         android:gravity="center_vertical"
         android:paddingLeft="@dimen/dp_20"
         android:text="@string/app_name"
