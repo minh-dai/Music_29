@@ -15,9 +15,9 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHodel> {
-    private static List<Song> mSongs;
-    private static Context mContext;
+public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
+    private List<Song> mSongs;
+    private Context mContext;
     private OnClickItemListener mClickItemListener;
 
     public RecyclerViewAdapter(Context context) {
@@ -27,15 +27,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @NonNull
     @Override
-    public ViewHodel onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_fragment_online, parent, false);
-        return new ViewHodel(view);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHodel holder, int position) {
-        holder.bindView(mSongs.get(position) , mClickItemListener);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.bindView(mContext, mSongs.get(position), mSongs, mClickItemListener);
     }
 
     public void setSongs(List<Song> songs) {
@@ -52,24 +52,27 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return mSongs == null ? 0 : mSongs.size();
     }
 
-    public static class ViewHodel extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private ImageView mImageSong;
         private TextView mTextSongName;
         private OnClickItemListener mClickItemListener;
+        private List<Song> mSongs;
 
-        public ViewHodel(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
             mImageSong = itemView.findViewById(R.id.image_song_player);
             mTextSongName = itemView.findViewById(R.id.text_song);
             itemView.setOnClickListener(this);
         }
 
-        public void bindView(Song song , OnClickItemListener clickItemListener) {
+        public void bindView(Context context, Song song, List<Song> songs,
+                OnClickItemListener clickItemListener) {
             mClickItemListener = clickItemListener;
             mTextSongName.setText(song.getTitle().trim());
-            Picasso.with(mContext).load(song.getArtworkUrl()).
+            Picasso.with(context).load(song.getArtworkUrl()).
                     placeholder(R.drawable.item_music).into(mImageSong);
+            mSongs = songs;
         }
 
         @Override

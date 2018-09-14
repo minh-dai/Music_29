@@ -1,6 +1,6 @@
 package com.framgia.music_29.data.source;
 
-import android.content.Context;
+import android.content.ContentResolver;
 import com.framgia.music_29.data.model.Genre;
 import com.framgia.music_29.data.source.local.SongLocalDataSoure;
 import com.framgia.music_29.data.source.remote.SongRemoteDataSource;
@@ -33,7 +33,7 @@ public class SongRepository implements SongDataSource {
         mSongRemoteDataSource.loadSong(genre, callBack);
     }
 
-    public void getDataLocal(Context context , LocalCallBack callback) {
-        mSongLocalDataSoure.loadDataLocal(context , callback);
+    public void getDataLocal(ContentResolver contentResolver, LocalCallBack callback) {
+        mSongLocalDataSoure.loadDataLocal(contentResolver, callback);
     }
 }

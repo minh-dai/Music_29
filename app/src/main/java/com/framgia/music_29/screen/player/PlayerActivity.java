@@ -1,15 +1,20 @@
 package com.framgia.music_29.screen.player;
 
+import android.app.DownloadManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.webkit.MimeTypeMap;
+import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -17,8 +22,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.framgia.music_29.R;
 import com.framgia.music_29.data.model.Song;
+import com.framgia.music_29.data.source.local.SqliteDownload;
 import com.framgia.music_29.data.source.local.SqliteFavouriteSong;
 import com.framgia.music_29.screen.genre.GenreActivity;
+import com.framgia.music_29.screen.service.DownLoadService;
 import com.framgia.music_29.screen.service.MusicService;
 import com.framgia.music_29.utils.Constant;
 import com.framgia.music_29.utils.ConstantApi;
@@ -49,7 +56,7 @@ public class PlayerActivity extends AppCompatActivity
     private ProgressBar mProgressBar;
     private MusicService mService;
     private Song mSong;
-    private boolean mIsBound = false;
+    private boolean mIsBound;
     private boolean mIsPlay;
     private boolean mIsRandom;
     private boolean mIsFavourite;
@@ -58,18 +65,12 @@ public class PlayerActivity extends AppCompatActivity
     private final int mDefaultTimeDelay = 1000;
     private final String mTypeTimeSong = "mm:ss";
     private final int mDefualtTimeSeebar = 0;
-    private static boolean mLocal;
-
-    public static Intent getPlayerIntent(Context context, Song song) {
-        Intent intent = new Intent(context, PlayerActivity.class);
-        intent.putExtra(GenreActivity.EXTRA_SONG, song);
-        return intent;
-    }
+    private boolean mLocal;
 
     public static Intent getPlayerIntent(Context context, Song song, boolean local) {
-        mLocal = local;
         Intent intent = new Intent(context, PlayerActivity.class);
         intent.putExtra(GenreActivity.EXTRA_SONG, song);
+        intent.putExtra(GenreActivity.EXTRA_LOCAL, local);
         return intent;
     }
 
@@ -118,40 +119,58 @@ public class PlayerActivity extends AppCompatActivity
         mHandler = new Handler();
         mPresenter = new PlayerPresenter();
         mPresenter.setView(this);
-        mSong = getIntent().getParcelableExtra(GenreActivity.EXTRA_SONG);
-        setContextComponent(mSong);
-        mSeekBarSong.setOnSeekBarChangeListener(mOnSeekBarChange);
-        mIsFavourite = !mPresenter.onGetFavoriteSong(new SqliteFavouriteSong(this), mSong.getId());
-        setImageFavourite();
+        Song song = getIntent().getParcelableExtra(GenreActivity.EXTRA_SONG);
+        if (song != null){
+            if (mSong == null || !song.getId().equals(mSong.getId())) {
+                mSong = song;
+                mLocal = getIntent().getBooleanExtra(GenreActivity.EXTRA_LOCAL, false);
+                setContextComponent(mSong);
+                mSeekBarSong.setOnSeekBarChangeListener(mOnSeekBarChange);
+                mIsFavourite = !mPresenter.onGetFavoriteSong(new SqliteFavouriteSong(this), mSong.getId());
+                setImageFavourite();
+                mButtonPlay.setEnabled(false);
+            }
+        }
     }
 
     private void setContextComponent(Song song) {
         if (song != null) {
             mSong = song;
             mTextSongName.setText(song.getTitle().trim());
+            mIsPlay = false;
+            setImagePauseSong();
             if (!mSong.isStreamable()) {
                 mImageFavorite.setVisibility(View.GONE);
             }
             mProgressBar.setVisibility(View.VISIBLE);
-            if (!mSong.isDownloadable()) {
+            checkDownloaded();
+            if (!mSong.isDownloadable() || checkDownloaded()) {
                 mImageDownload.setVisibility(View.GONE);
             }
-            if (mLocal) {
-                mImageDownload.setVisibility(View.GONE);
-                byte[] images = song.getUriImage();
-                if (images == null) {
-                    mImageSong.setImageResource(R.drawable.item_music);
-                } else {
-                    mImageSong.setImageBitmap(
-                            BitmapFactory.decodeByteArray(images, 0, song.getUriImage().length));
-                }
-            } else {
-                Picasso.with(this)
-                        .load(pareString(mSong.getArtworkUrl()))
-                        .placeholder(R.drawable.item_music_app)
-                        .into(mImageSong);
-            }
+            setImageSong();
         }
+    }
+
+    private void setImageSong() {
+        if (mLocal) {
+            mImageDownload.setVisibility(View.GONE);
+            byte[] images = mSong.getUriImage();
+            if (images == null) {
+                mImageSong.setImageResource(R.drawable.item_music);
+            } else {
+                mImageSong.setImageBitmap(
+                        BitmapFactory.decodeByteArray(images, 0, mSong.getUriImage().length));
+            }
+        } else {
+            Picasso.with(this)
+                    .load(pareString(mSong.getArtworkUrl()))
+                    .placeholder(R.drawable.item_music_app)
+                    .into(mImageSong);
+        }
+    }
+
+    private boolean checkDownloaded() {
+        return mPresenter.onGetDownloadedSong(new SqliteDownload(this) , mSong.getId());
     }
 
     private String pareString(String url) {
@@ -210,10 +229,37 @@ public class PlayerActivity extends AppCompatActivity
 
     private void checkExternal() {
         if (mPresenter.isExternalStorageReadable()) {
-            mService.onDownloadSong(mSong.getUri() + ConstantApi.PLAY_URL, this);
+            Toast.makeText(this , getString(R.string.song_downloading) , Toast.LENGTH_SHORT).show();
+            mPresenter.onAddDownloadedSong(new SqliteDownload(this),mSong);
+            mImageDownload.setVisibility(View.GONE);
+            StringBuilder url =
+                    new StringBuilder(mSong.getDownloadUrl());
+            url.append(ConstantApi.LINK_DOWNLOAD);
+
+            downloadManage(url.toString());
+            Intent intent = new Intent(this , DownLoadService.class);
+            intent.putExtra(getString(R.string.download) , url.toString());
+            startService(intent);
         } else {
             Toast.makeText(this, getString(R.string.song_download), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void downloadManage(String url) {
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+        request.setTitle(getString(R.string.download));
+        request.setDescription(getString(R.string.song_downloading));
+        request.allowScanningByMediaScanner();
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        String fileName =
+                URLUtil.guessFileName(url, null, MimeTypeMap.getFileExtensionFromUrl(url));
+
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_MUSIC, fileName);
+
+        DownloadManager manager  =
+                (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+
+        manager.enqueue(request);
     }
 
     private Runnable mTimeCounter = new Runnable() {
@@ -295,6 +341,7 @@ public class PlayerActivity extends AppCompatActivity
         if (mService == null) {
             Intent intentService = new Intent(this, MusicService.class);
             bindService(intentService, mConnection, Context.BIND_AUTO_CREATE);
+            startService(intentService);
         }
         mPresenter.onStart();
     }
@@ -338,7 +385,9 @@ public class PlayerActivity extends AppCompatActivity
 
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
+
                     mService.setSeekTo(seekBar.getProgress());
+                    mService.getDuration();
                 }
             };
 
@@ -352,6 +401,7 @@ public class PlayerActivity extends AppCompatActivity
 
     @Override
     public void setVisibilityProgressBar() {
+        mButtonPlay.setEnabled(true);
         mProgressBar.setVisibility(View.GONE);
     }
 

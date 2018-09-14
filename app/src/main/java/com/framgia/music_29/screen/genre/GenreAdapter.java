@@ -14,9 +14,10 @@ import com.framgia.music_29.R;
 import com.framgia.music_29.data.model.Song;
 import com.squareup.picasso.Picasso;
 import java.util.List;
+import java.util.ArrayList;
 
 public class GenreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private static List<Song> mSongs;
+    private List<Song> mSongs;
     private Context mContext;
     private onClickItemListener mClickItemListener;
     private boolean mLocal;
@@ -24,6 +25,8 @@ public class GenreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public GenreAdapter(Context context) {
         mContext = context;
+        mSongs = new ArrayList<>();
+
     }
 
     @NonNull
@@ -32,7 +35,7 @@ public class GenreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (viewType == mViewTypeItem) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_recycler_view, parent, false);
-            return new ItemViewHolder(view);
+            return new ItemViewHolder(view, mSongs);
         }
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_loading, parent, false);
@@ -56,6 +59,10 @@ public class GenreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         notifyDataSetChanged();
     }
 
+    // anh xem em loi nay nua duojc k ??
+    //loi gi nua e
+    //man hinh do o dau
+
     @Override
     public int getItemViewType(int position) {
         return mSongs.get(position) == null ? mViewTypeLoading : mViewTypeItem;
@@ -66,7 +73,7 @@ public class GenreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public void setSongs(List<Song> songs) {
-        mSongs = songs;
+        mSongs.addAll(songs);
         notifyDataSetChanged();
     }
 
@@ -78,13 +85,15 @@ public class GenreAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     protected static class ItemViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
 
-        protected static ImageView mImageSong;
-        protected static TextView mTextSongName;
-        protected static TextView mTextSongUser;
+        protected ImageView mImageSong;
+        protected TextView mTextSongName;
+        protected TextView mTextSongUser;
+        private List<Song> mSongs;
         protected onClickItemListener mClickItemListener;
 
-        public ItemViewHolder(@NonNull View itemView) {
+        public ItemViewHolder(@NonNull View itemView, List<Song> songs) {
             super(itemView);
+            mSongs = songs;
             mImageSong = itemView.findViewById(R.id.image_song);
             mTextSongName = itemView.findViewById(R.id.text_song_name);
             mTextSongUser = itemView.findViewById(R.id.text_song_user);

@@ -13,27 +13,37 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.framgia.music_29.R;
+import com.framgia.music_29.data.model.Genre;
 import com.framgia.music_29.data.model.Song;
 import com.framgia.music_29.screen.genre.GenreActivity;
+import com.framgia.music_29.screen.home.HomeActivity;
 import com.framgia.music_29.screen.player.PlayerActivity;
 import com.framgia.music_29.screen.service.MusicService;
 import com.framgia.music_29.utils.ConstantApi;
 import com.framgia.music_29.utils.OnClickItemListener;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OnlineFragment extends Fragment
-        implements OnlineFragmentContract.View, View.OnClickListener , OnClickItemListener{
+        implements OnlineFragmentContract.View, View.OnClickListener, OnClickItemListener,
+        HomeActivity.IPassSongOnline {
 
-    public static final String EXTRA_GENRE = "com.framgia.music_29.EXTRA_GENRE";
+    public static final String EXTRA_GENRE_SONG = "com.framgia.music_29.EXTRA_GENRE_SONG";
+    public static final String EXTRA_GENRE_STATUS = "com.framgia.music_29.EXTRA_STAUTS";
+    public static final String EXTRA_GENRE_LOCAL = "com.framgia.music_29.EXTRA_GENRE_LOCAL";
     private RecyclerViewAdapter mAdapterMusics;
     private RecyclerViewAdapter mAdapterAudios;
     private OnlineFragmentContract.Presenter mPresenter;
+    private Song mSong;
     private TextView mTextMusics;
     private TextView mTextAudios;
     private TextView mTextAlternativerock;
     private TextView mTextAmbients;
     private TextView mTextClassicals;
     private TextView mTextCountrys;
+    private HomeActivity mActivity;
+    private boolean mLocal;
+    private boolean mIsPlay;
 
     public static OnlineFragment newInstance() {
         return new OnlineFragment();
@@ -43,6 +53,7 @@ public class OnlineFragment extends Fragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.fragment_online, container, false);
         return rootView;
     }
@@ -97,9 +108,13 @@ public class OnlineFragment extends Fragment
         mPresenter.setView(this);
 
         mAdapterMusics = new RecyclerViewAdapter(getContext());
+        mAdapterMusics.setClickItemListener(this);
+
         mAdapterAudios = new RecyclerViewAdapter(getContext());
         mAdapterAudios.setClickItemListener(this);
-        mAdapterMusics.setClickItemListener(this);
+
+        mActivity = (HomeActivity) getActivity();
+        mActivity.setPassSongViewPaper(this);
     }
 
     private void setDataListGenres() {
@@ -112,6 +127,12 @@ public class OnlineFragment extends Fragment
                 mAdapterAudios.setSongs(audios);
             }
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mLocal = false;
     }
 
     @Override
@@ -139,12 +160,25 @@ public class OnlineFragment extends Fragment
     }
 
     private void onStartGenreAvtivity(String genre) {
-        startActivity(GenreActivity.getGenreIntent(getContext() , genre));
+        Genre genre1 = new Genre();
+        genre1.setName(genre);
+        genre1.setSongs(new ArrayList<Song>());
+        startActivity(GenreActivity.getGenreIntent(getContext(), genre1, mSong, mLocal, mIsPlay));
     }
 
     @Override
     public void onClick(List<Song> songs, int position) {
-        startActivity(PlayerActivity.getPlayerIntent(getContext(), songs.get(position)));
-        getContext().startService(MusicService.getInstance(getContext(), songs, position));
+        startActivity(PlayerActivity.getPlayerIntent(getContext(), songs.get(position), mLocal));
+        getContext().startService(MusicService.getInstance(getContext(), songs, position, false));
+    }
+
+    @Override
+    public void passSong(Song song) {
+        mSong = song;
+    }
+
+    @Override
+    public void passStatus(boolean isPLay) {
+        mIsPlay = isPLay;
     }
 }

@@ -1,5 +1,6 @@
 package com.framgia.music_29.screen.home.offline;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import com.framgia.music_29.data.model.Song;
 import com.framgia.music_29.data.source.SongDataSource;
@@ -14,7 +15,6 @@ public class OfflineFragmentPresenter
 
     private OfflineFragmentContract.View mView;
     private SongRepository mSongRepository;
-    private SqliteFavouriteSong mFavouriteSong;
 
     public OfflineFragmentPresenter() {
         mSongRepository = SongRepository.getInstance(SongRemoteDataSource.getInstance(),
@@ -37,8 +37,8 @@ public class OfflineFragmentPresenter
     }
 
     @Override
-    public void loadDataPlaylist(Context context) {
-        mSongRepository.getDataLocal(context ,this);
+    public void loadDataPlaylist(ContentResolver contentResolver) {
+        mSongRepository.getDataLocal(contentResolver ,this);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class OfflineFragmentPresenter
     }
 
     @Override
-    public void loadDataDownload() {
+    public void loadSongDownload() {
 
     }
 

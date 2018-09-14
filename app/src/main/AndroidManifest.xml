@@ -26,6 +26,7 @@
         <activity android:name=".screen.player.PlayerActivity"/>
         <activity android:name=".screen.search.SearchActivity"/>
         <service android:name=".screen.service.MusicService"/>
+        <service android:name=".screen.service.DownLoadService"/>
     </application>
 
 </manifest>

@@ -9,30 +9,19 @@ import com.framgia.music_29.data.model.Song;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SqliteFavouriteSong extends SQLiteOpenHelper {
+public class SqliteDownload extends SQLiteOpenHelper {
 
-    public static final String DATABASE_NAME = "favotite";
-    private static final String TABLE_NAME = "favotiteMp3";
+    public static final String DATABASE_NAME = "download";
+    private static final String TABLE_NAME = "downloadMp3";
     private static final String ID = "id";
-    private static final String mTitle = "title";
-    private static final String mArtworkUrl = "artwork_url";
-    private static final String mDownloadUrl = "download_url";
-    private static final String mUserFullName = "username";
-    private static final String mUri = "uri";
 
-    public SqliteFavouriteSong(Context context) {
+    public SqliteDownload(Context context) {
         super(context, DATABASE_NAME, null, 1);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sqlQuery = "CREATE TABLE " + TABLE_NAME + " ("
-                + ID + " TEXT primary key, "
-                + mTitle + " TEXT, "
-                + mArtworkUrl + " TEXT, "
-                + mDownloadUrl + " TEXT,"
-                + mUri + " TEXT, "
-                + mUserFullName + " TEXT)";
+        String sqlQuery = "CREATE TABLE " + TABLE_NAME + " (" + ID + " TEXT primary key )";
         db.execSQL(sqlQuery);
     }
 
@@ -46,12 +35,6 @@ public class SqliteFavouriteSong extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(ID, song.getId());
-        values.put(mTitle, song.getTitle());
-        values.put(mUri , song.getUri());
-        values.put(mDownloadUrl, song.getDownloadUrl());
-        values.put(mArtworkUrl, song.getArtworkUrl());
-        values.put(mUserFullName, song.getUserFullName());
-
         db.insert(TABLE_NAME, null, values);
         db.close();
     }
@@ -67,12 +50,6 @@ public class SqliteFavouriteSong extends SQLiteOpenHelper {
             do {
                 Song song = new Song();
                 song.setId(cursor.getString(0));
-                song.setTitle(cursor.getString(1));
-                song.setArtworkUrl(cursor.getString(2));
-                song.setDownloadUrl(cursor.getString(3));
-                song.setUri(cursor.getString(4));
-                song.setUserFullName(cursor.getString(5));
-                song.setIsIsFavourite(true);
                 listStudent.add(song);
             } while (cursor.moveToNext());
         }

@@ -1,5 +1,6 @@
 package com.framgia.music_29.screen.home.offline;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import com.framgia.music_29.BasePresenter;
 import com.framgia.music_29.data.model.Song;
@@ -8,13 +9,13 @@ import java.util.List;
 
 public interface OfflineFragmentContract {
     interface Presenter extends BasePresenter<View> {
-        void loadDataPlaylist(Context context);
+        void loadDataPlaylist(ContentResolver contentResolver);
 
         void loadDataFavorite(SqliteFavouriteSong mFavouriteSong);
 
         void loadDataAlbum();
 
-        void loadDataDownload();
+        void loadSongDownload();
     }
 
     interface View {

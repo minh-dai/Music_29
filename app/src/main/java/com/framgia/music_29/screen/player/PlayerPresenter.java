@@ -2,14 +2,16 @@ package com.framgia.music_29.screen.player;
 
 import android.os.Environment;
 import com.framgia.music_29.data.model.Song;
+import com.framgia.music_29.data.source.local.SqliteDownload;
 import com.framgia.music_29.data.source.local.SqliteFavouriteSong;
 
 public class PlayerPresenter implements PlayerContract.Presenter {
     private SqliteFavouriteSong mFavouriteSong;
+    private PlayerContract.View mView;
 
     @Override
     public void setView(PlayerContract.View view) {
-
+        mView = view;
     }
 
     @Override
@@ -45,5 +47,15 @@ public class PlayerPresenter implements PlayerContract.Presenter {
     public void onDeleteFavorite(SqliteFavouriteSong favouriteSong, Song song) {
         mFavouriteSong = favouriteSong;
         mFavouriteSong.deleteSong(song);
+    }
+
+    @Override
+    public boolean onGetDownloadedSong(SqliteDownload sqlite, String id) {
+        return sqlite.getSongById(id);
+    }
+
+    @Override
+    public void onAddDownloadedSong(SqliteDownload sqlite, Song song) {
+        sqlite.addSong(song);
     }
 }

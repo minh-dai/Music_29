@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
@@ -37,7 +38,7 @@
         android:id="@+id/viewpager_home"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/tablayout_home"
+        app:layout_constraintBottom_toTopOf="@+id/constraint_home"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_app_name"
@@ -48,11 +49,106 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:tabIndicatorColor="@color/color_red"
         app:tabRippleColor="@color/color_red_white"
         app:tabSelectedTextColor="@color/color_black"
         app:tabTextColor="@color/color_black"
         />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraint_home"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/color_home_red"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/tablayout_home"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.611"
+        app:layout_constraintStart_toStartOf="parent"
+        >
+
+        <ImageView
+            android:id="@+id/image_song_home"
+            android:layout_width="@dimen/dp_50"
+            android:layout_height="@dimen/dp_50"
+            android:layout_marginBottom="@dimen/dp_4"
+            android:layout_marginLeft="@dimen/dp_16"
+            android:layout_marginStart="@dimen/dp_16"
+            android:layout_marginTop="@dimen/dp_4"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/item_music"
+            tools:ignore="VectorDrawableCompat"
+            />
+
+        <TextView
+            android:id="@+id/text_song_home"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/dp_8"
+            android:layout_marginLeft="@dimen/dp_32"
+            android:layout_marginRight="@dimen/dp_8"
+            android:layout_marginStart="@dimen/dp_32"
+            android:layout_marginTop="@dimen/dp_8"
+            android:maxLength="20"
+            android:maxLines="1"
+            android:paddingLeft="@dimen/dp_16"
+            android:textColor="@color/color_white"
+            android:textSize="@dimen/sp_14"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/image_song_home"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <ImageView
+            android:id="@+id/image_pre_home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp_32"
+            android:layout_marginStart="@dimen/dp_32"
+            android:layout_marginTop="@dimen/dp_8"
+            app:layout_constraintBottom_toBottomOf="@+id/image_song_home"
+            app:layout_constraintStart_toEndOf="@+id/image_song_home"
+            app:layout_constraintTop_toBottomOf="@+id/text_song_home"
+            app:srcCompat="@android:drawable/ic_media_previous"
+            />
+
+        <ImageView
+            android:id="@+id/image_play_home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/dp_16"
+            android:layout_marginLeft="@dimen/dp_24"
+            android:layout_marginRight="@dimen/dp_16"
+            android:layout_marginStart="@dimen/dp_24"
+            android:layout_marginTop="@dimen/dp_8"
+            app:layout_constraintBottom_toBottomOf="@+id/image_song_home"
+            app:layout_constraintEnd_toStartOf="@+id/image_next_home"
+            app:layout_constraintStart_toEndOf="@+id/image_pre_home"
+            app:layout_constraintTop_toBottomOf="@+id/text_song_home"
+            app:srcCompat="@android:drawable/ic_media_pause"
+            tools:ignore="VectorDrawableCompat"
+            />
+        <ImageView
+            android:id="@+id/image_next_home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/dp_56"
+            android:layout_marginLeft="@dimen/dp_16"
+            android:layout_marginRight="@dimen/dp_56"
+            android:layout_marginStart="@dimen/dp_16"
+            android:layout_marginTop="@dimen/dp_8"
+            app:layout_constraintBottom_toBottomOf="@+id/image_song_home"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/image_play_home"
+            app:layout_constraintTop_toBottomOf="@+id/text_song_home"
+            app:srcCompat="@android:drawable/ic_media_next"
+            tools:ignore="VectorDrawableCompat"
+            />
+
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

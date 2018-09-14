@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/color_white_gray"
     >
 
     <ImageView
@@ -196,9 +197,10 @@
         tools:ignore="VectorDrawableCompat"
         />
     <ProgressBar
+        android:indeterminateDrawable="@drawable/circular_progressbar"
         android:id="@+id/progress_bar_player"
-        android:layout_width="@dimen/dp_25"
-        android:layout_height="@dimen/dp_25"
+        android:layout_width="@dimen/dp_30"
+        android:layout_height="@dimen/dp_30"
         android:layout_marginLeft="@dimen/dp_24"
         android:layout_marginStart="@dimen/dp_24"
         app:layout_constraintBottom_toBottomOf="@+id/text_time_current"

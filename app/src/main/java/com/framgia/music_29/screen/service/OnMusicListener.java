@@ -2,7 +2,7 @@ package com.framgia.music_29.screen.service;
 
 import com.framgia.music_29.data.model.Song;
 
-public interface onStatusListener {
+public interface OnMusicListener {
 
     void onPlayMedia(Song song);
 
@@ -22,4 +22,5 @@ public interface onStatusListener {
 
     boolean isPlay();
 
+    Song getSong();
 }

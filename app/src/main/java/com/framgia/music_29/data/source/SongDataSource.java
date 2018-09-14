@@ -1,5 +1,6 @@
 package com.framgia.music_29.data.source;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import com.framgia.music_29.data.model.Genre;
 import com.framgia.music_29.data.model.Song;
@@ -23,6 +24,6 @@ public interface SongDataSource {
 
     void getSongs(Genre genre, CallBack callBack);
 
-    void getDataLocal(Context context ,LocalCallBack callback);
+    void getDataLocal(ContentResolver contentResolver, LocalCallBack callback);
 
 }

@@ -6,6 +6,7 @@ import com.framgia.music_29.data.model.Song;
 import com.framgia.music_29.screen.player.IUpdateUi;
 import com.framgia.music_29.screen.player.PlayerActivity;
 import com.framgia.music_29.utils.ConstantApi;
+import com.framgia.music_29.utils.PassSongService;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
@@ -15,10 +16,11 @@ public class MusicMediaPlayer {
     private List<Song> mSongs;
     private int mPosition;
     private Song mSong;
-    private static boolean mIsLocal;
+    private boolean mIsLocal;
     private boolean mIsRandom;
     private final int mDefualtRandom = 0;
     private IUpdateUi mIUpdateUi;
+    private PassSongService mPassSongService;
     private static MusicMediaPlayer mInstant;
 
     public static MusicMediaPlayer getInstant() {
@@ -28,17 +30,20 @@ public class MusicMediaPlayer {
         return mInstant;
     }
 
-    public static MusicMediaPlayer getInstant(boolean local) {
-        mIsLocal = local;
-        if (mInstant == null) {
-            mInstant = new MusicMediaPlayer();
-        }
-        return mInstant;
+    public MusicMediaPlayer() {
+        onStartMedia();
     }
 
+    public void setPassSongService(PassSongService passSongService) {
+        mPassSongService = passSongService;
+    }
 
     public void setLocal(boolean local) {
         mIsLocal = local;
+    }
+
+    public boolean getLocal() {
+        return mIsLocal;
     }
 
     public void setIUpdateUi(IUpdateUi IUpdateUi) {
@@ -87,16 +92,22 @@ public class MusicMediaPlayer {
                 } else {
                     url = mSong.getArtworkUrl();
                 }
+                passSong(mSong,  mIsLocal);
                 mMediaPlayer.reset();
                 mMediaPlayer.setDataSource(url);
                 mMediaPlayer.prepareAsync();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
             mMediaPlayer.stop();
-            mIUpdateUi.setImagePlay(PlayerActivity.ACTION_MEDIA_FAIL);
+            passImagePlay(PlayerActivity.ACTION_MEDIA_FAIL);
         }
+    }
+
+    public void passStatusNotifi(boolean status) {
+        mPassSongService.passStatus(status);
     }
 
     public void playMediaPre() {
@@ -108,32 +119,39 @@ public class MusicMediaPlayer {
                 } else {
                     url = mSong.getArtworkUrl();
                 }
+
                 mMediaPlayer.reset();
                 mMediaPlayer.setDataSource(url);
                 mMediaPlayer.prepareAsync();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
             mMediaPlayer.stop();
-            mIUpdateUi.setImagePlay(PlayerActivity.ACTION_MEDIA_FAIL);
+            passImagePlay(PlayerActivity.ACTION_MEDIA_FAIL);
         }
     }
 
     private void updateSong() {
         mSong = mSongs.get(mPosition);
+        mMediaPlayer.pause();
         if (mIUpdateUi != null) {
             mIUpdateUi.setSong(mSong);
         }
+         passSong(mSong,  mIsLocal);
+
     }
 
     public void pauseMedia() {
         if (isPlay()) {
             mMediaPlayer.pause();
-            mIUpdateUi.setImagePlay(PlayerActivity.ACTION_MEDIA_PAUSE);
+            passImagePlay(PlayerActivity.ACTION_MEDIA_PAUSE);
+            passStatus(isPlay());
         } else {
             mMediaPlayer.start();
-            mIUpdateUi.setImagePlay(PlayerActivity.ACTION_MEDIA_START);
+            passImagePlay(PlayerActivity.ACTION_MEDIA_START);
+            passStatus(!isPlay());
         }
     }
 
@@ -142,6 +160,12 @@ public class MusicMediaPlayer {
             ++mPosition;
             updateSong();
             playMediaPre();
+        }
+    }
+
+    private void passImagePlay(String action){
+        if (mIUpdateUi!= null){
+            mIUpdateUi.setImagePlay(action);
         }
     }
 
@@ -178,22 +202,34 @@ public class MusicMediaPlayer {
         }
     }
 
+    private void passStatus(boolean status){
+        if (mPassSongService != null) {
+            mPassSongService.passStatus(status);
+        }
+    }
+
+    private void passSong(Song song, boolean isLocal){
+        if (mPassSongService != null) {
+            mPassSongService.passSong(song,  isLocal);
+        }
+    }
+
     private MediaPlayer.OnPreparedListener mOnPrepare = new MediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mediaPlayer) {
-            mIUpdateUi.setImagePlay(PlayerActivity.ACTION_MEDIA_START);
-            mIUpdateUi.setVisibilityProgressBar();
             mediaPlayer.start();
+            passImagePlay(PlayerActivity.ACTION_MEDIA_START);
+            passStatus(false);
+            mIUpdateUi.setVisibilityProgressBar();
         }
     };
 
     private MediaPlayer.OnCompletionListener mCompletion = new MediaPlayer.OnCompletionListener() {
         @Override
         public void onCompletion(MediaPlayer mp) {
-            if (mIUpdateUi != null) {
-                nextMedia();
-                mIUpdateUi.setImagePlay(PlayerActivity.ACTION_MEDIA_PAUSE);
-            }
+            nextMedia();
+            passImagePlay(PlayerActivity.ACTION_MEDIA_PAUSE);
+            passStatus(true);
         }
     };
 

@@ -35,5 +35,7 @@ public interface ConstantApi {
     String GENRE_PLAYLIST = "PlayList";
     String GENRE_FAVOURITE = "Favourite Songs";
     String PLAY_URL= STREAM+CLIENT_ID+ BuildConfig.API_KEY;
+    String CLIENT_DOWNLOAD = "?client_id=";
+    String LINK_DOWNLOAD = CLIENT_DOWNLOAD + BuildConfig.API_KEY;
 
 }

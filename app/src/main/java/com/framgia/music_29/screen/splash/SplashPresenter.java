@@ -1,6 +1,5 @@
 package com.framgia.music_29.screen.splash;
 
-import android.content.Context;
 import com.framgia.music_29.BuildConfig;
 import com.framgia.music_29.data.model.Genre;
 import com.framgia.music_29.data.source.SongDataSource;

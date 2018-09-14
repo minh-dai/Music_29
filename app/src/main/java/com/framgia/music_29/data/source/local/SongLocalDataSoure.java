@@ -1,5 +1,6 @@
 package com.framgia.music_29.data.source.local;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import com.framgia.music_29.data.source.SongDataSource;
 
@@ -13,7 +14,7 @@ public class SongLocalDataSoure {
         return sInstance;
     }
 
-    public void loadDataLocal(Context context, SongDataSource.LocalCallBack callBack) {
-        new GetDataLocal(context , callBack).execute();
+    public void loadDataLocal(ContentResolver contentResolver , SongDataSource.LocalCallBack callBack) {
+        new GetDataLocal(contentResolver , callBack).execute();
     }
 }

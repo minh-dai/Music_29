@@ -13,9 +13,9 @@
     <string name="name_tab_online">Online</string>
     <string name="name_tab_offline">Offline</string>
     <string name="error">"Error :"</string>
-    <string name="favorite_songs">Favourite Songs</string>
-    <string name="playlist">PlayList</string>
-    <string name="songs">Songs</string>
+    <string name="favorite_songs">Favourite</string>
+    <string name="playlist">Songs</string>
+    <string name="downloaded">Downloaded</string>
     <string name="album">Album</string>
     <string name="network_not_available">"Network not available"</string>
     <string name="time_media">00:00</string>
@@ -23,7 +23,8 @@
     <string name="text_hint_search">Song Name</string>
     <string name="not_find_data">Data not find</string>
     <string name="string_null">null</string>
-    <string name="download">"Downloaded"</string>
+    <string name="download">"Song Download"</string>
     <string name="song_fail">Song Fail</string>
     <string name="song_download">Song is not download</string>
+    <string name="song_downloading">Song is downloading</string>
 </resources>
