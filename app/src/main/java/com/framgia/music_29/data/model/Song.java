@@ -20,6 +20,9 @@ public class Song implements Parcelable {
     private String mUserFullName;
     private byte[] mUriImage;
 
+    public Song() {
+    }
+
     public Song(String id, String title, String userFullName, byte[] uriImage, String artworkUrl) {
         mArtworkUrl = artworkUrl;
         mId = id;
