@@ -14,6 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.framgia.music_29.R;
 import com.framgia.music_29.data.model.Song;
+import com.framgia.music_29.data.source.local.SqliteFavouriteSong;
 import com.framgia.music_29.screen.genre.GenreActivity;
 import com.framgia.music_29.screen.home.online.OnlineFragment;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class OfflineFragment extends Fragment
     public static String EXTRA_LIST_GENRE = "com.framgia.music_29.EXTRA_LIST_GENRE";
     private OfflineFragmentContract.Presenter mPresenter;
     private ProgressBar mProgressBar;
+    private SqliteFavouriteSong mFavouriteSong;
 
     public static OfflineFragment newInstance() {
         return new OfflineFragment();
@@ -48,6 +50,7 @@ public class OfflineFragment extends Fragment
     private void initComponent() {
         mPresenter = new OfflineFragmentPresenter();
         mPresenter.setView(this);
+        mFavouriteSong = new SqliteFavouriteSong(getContext());
     }
 
     private void registerEventListener(View view) {
@@ -63,7 +66,8 @@ public class OfflineFragment extends Fragment
         if (isExternalStorageReadable()) {
             switch (v.getId()) {
                 case R.id.layout_favotite:
-                    mPresenter.loadDataFavorite();
+                    mProgressBar.setVisibility(View.VISIBLE);
+                    mPresenter.loadDataFavorite(mFavouriteSong);
                     break;
                 case R.id.layout_playlist:
                     mProgressBar.setVisibility(View.VISIBLE);
@@ -83,7 +87,7 @@ public class OfflineFragment extends Fragment
 
     @Override
     public void onFavoriteClicked(List<Song> songs) {
-
+        onStartGenreAvtivity(songs,getString(R.string.favorite_songs));
     }
 
     @Override
@@ -108,7 +112,7 @@ public class OfflineFragment extends Fragment
 
     private void onStartGenreAvtivity(List<Song> songs, String genre) {
         mProgressBar.setVisibility(View.GONE);
-        startActivity(GenreActivity.getGenreIntent(getContext() , genre,true, songs));
+        startActivity(GenreActivity.getGenreIntent(getContext() , genre, songs));
     }
 
     public boolean isExternalStorageReadable() {

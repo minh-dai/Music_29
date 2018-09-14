@@ -42,13 +42,12 @@ public class GenreActivity extends AppCompatActivity
         return intent;
     }
 
-    public static Intent getGenreIntent(Context context, String genre, boolean local,
-            List<Song> songs) {
+    public static Intent getGenreIntent(Context context, String genre, List<Song> songs) {
         Intent intent = new Intent(context, GenreActivity.class);
         intent.putExtra(OnlineFragment.EXTRA_GENRE, genre);
         intent.putParcelableArrayListExtra(OfflineFragment.EXTRA_LIST_GENRE,
                 (ArrayList<? extends Parcelable>) songs);
-        mLocal = local;
+        mLocal = true;
         return intent;
     }
 
@@ -88,8 +87,7 @@ public class GenreActivity extends AppCompatActivity
         String genre = getIntent().getStringExtra(OnlineFragment.EXTRA_GENRE);
         List<Song> songs =
                 getIntent().getParcelableArrayListExtra(OfflineFragment.EXTRA_LIST_GENRE);
-        setTitleActivity(genre);
-        if (!genre.equals(ConstantApi.GENRE_PLAYLIST)) {
+        if (!mLocal) {
             mRecyclerGenre.addOnScrollListener(
                     new LoadMore((LinearLayoutManager) mRecyclerGenre.getLayoutManager()) {
                         @Override
@@ -99,8 +97,9 @@ public class GenreActivity extends AppCompatActivity
                     });
             mPesenter.loadDataForGenre(genre);
         } else {
-            mAdapter.setSongs(songs, true);
+            mListSongs = songs;
         }
+        setTitleActivity(genre);
         mProgressBar.setVisibility(View.GONE);
     }
 
@@ -137,6 +136,13 @@ public class GenreActivity extends AppCompatActivity
                 mTextGenre.setText(getString(R.string.genre_country));
                 break;
             case ConstantApi.GENRE_PLAYLIST:
+                mLocal = true;
+                mTextGenre.setText(getString(R.string.playlist));
+                mAdapter.setSongs(mListSongs, true);
+                break;
+            case ConstantApi.GENRE_FAVOURITE:
+                mLocal = false;
+                mAdapter.setSongs(mListSongs);
                 mTextGenre.setText(getString(R.string.favorite_songs));
                 break;
             default:

@@ -22,5 +22,4 @@ public interface onStatusListener {
 
     boolean isPlay();
 
-    void setSong(Song song);
 }

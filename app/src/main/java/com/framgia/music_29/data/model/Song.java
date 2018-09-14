@@ -19,6 +19,7 @@ public class Song implements Parcelable {
     private String mDownloadUrl;
     private String mUserFullName;
     private byte[] mUriImage;
+    private boolean mIsmIsFavourite;
 
     public Song() {
     }
@@ -63,6 +64,14 @@ public class Song implements Parcelable {
         mDownloadUrl = in.readString();
         mUserFullName = in.readString();
         mUriImage = in.createByteArray();
+    }
+
+    public boolean isFavourite() {
+        return mIsmIsFavourite;
+    }
+
+    public void setIsIsFavourite(boolean ismIsFavourite) {
+        mIsmIsFavourite = ismIsFavourite;
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.framgia.music_29.data.model.Song;
 import com.framgia.music_29.data.source.SongDataSource;
 import com.framgia.music_29.data.source.SongRepository;
 import com.framgia.music_29.data.source.local.SongLocalDataSoure;
+import com.framgia.music_29.data.source.local.SqliteFavouriteSong;
 import com.framgia.music_29.data.source.remote.SongRemoteDataSource;
 import java.util.List;
 
@@ -13,6 +14,7 @@ public class OfflineFragmentPresenter
 
     private OfflineFragmentContract.View mView;
     private SongRepository mSongRepository;
+    private SqliteFavouriteSong mFavouriteSong;
 
     public OfflineFragmentPresenter() {
         mSongRepository = SongRepository.getInstance(SongRemoteDataSource.getInstance(),
@@ -40,8 +42,15 @@ public class OfflineFragmentPresenter
     }
 
     @Override
-    public void loadDataFavorite() {
+    public void loadDataFavorite(SqliteFavouriteSong mFavouriteSong) {
+        mView.onFavoriteClicked(setIsStream(mFavouriteSong.getAllSong()));
+    }
 
+    private List<Song> setIsStream(List<Song> allStudent) {
+        for (int i=0; i<allStudent.size() ; ++i){
+            allStudent.get(i).setStreamable(true);
+        }
+        return allStudent;
     }
 
     @Override

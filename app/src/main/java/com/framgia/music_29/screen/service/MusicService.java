@@ -37,14 +37,19 @@ public class MusicService extends Service implements onStatusListener {
 
     public static Intent getInstance(Context context, List<Song> songs, int position) {
         Intent intent = new Intent(context, MusicService.class);
-        mMusicMediaPlayer = MusicMediaPlayer.getInstant(songs, position);
+        mMusicMediaPlayer = MusicMediaPlayer.getInstant();
+        mMusicMediaPlayer.setSongs(songs);
+        mMusicMediaPlayer.setPosition(position);
         return intent;
     }
 
-    public static Intent getInstance(Context context,boolean local ,List<Song> songs, int position) {
+    public static Intent getInstance(Context context, boolean local, List<Song> songs,
+            int position) {
         mLocal = local;
         Intent intent = new Intent(context, MusicService.class);
-        mMusicMediaPlayer = MusicMediaPlayer.getInstant(songs, position , local);
+        mMusicMediaPlayer = MusicMediaPlayer.getInstant(local);
+        mMusicMediaPlayer.setSongs(songs);
+        mMusicMediaPlayer.setPosition(position);
         return intent;
     }
 
@@ -82,12 +87,8 @@ public class MusicService extends Service implements onStatusListener {
         return START_STICKY;
     }
 
-    public void onDownloadSong(String url , Context context) {
+    public void onDownloadSong(String url, Context context) {
         new DownloadDataSource(context).execute(url);
-    }
-
-    public void onFavoriteSong() {
-
     }
 
     public void getDuration() {
@@ -106,6 +107,7 @@ public class MusicService extends Service implements onStatusListener {
 
     @Override
     public void onPlayMedia(Song song) {
+        mMusicMediaPlayer.onStartMedia();
         mMusicMediaPlayer.playMediaPre(song);
     }
 
@@ -157,11 +159,6 @@ public class MusicService extends Service implements onStatusListener {
         return mMusicMediaPlayer.isPlay();
     }
 
-    @Override
-    public void setSong(Song song) {
-        mMusicMediaPlayer.setSong(song);
-    }
-
     public class LocalService extends Binder {
         public MusicService getService() {
             return MusicService.this;
@@ -179,15 +176,15 @@ public class MusicService extends Service implements onStatusListener {
                     android.R.drawable.ic_media_pause);
         }
 
-        if (mLocal){
+        if (mLocal) {
             byte[] images = song.getUriImage();
-            if(images != null){
+            if (images != null) {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(images, 0, images.length);
                 mRemoteViews.setImageViewBitmap(R.id.image_notification, bitmap);
-            }else {
+            } else {
                 mRemoteViews.setImageViewResource(R.id.image_notification, R.drawable.item_music);
             }
-        }else {
+        } else {
             Picasso.with(getApplicationContext())
                     .load(song.getArtworkUrl())
                     .placeholder(R.drawable.item_music)
@@ -254,15 +251,17 @@ public class MusicService extends Service implements onStatusListener {
         mRemoteViews.setOnClickPendingIntent(R.id.button_next_notification, pendingButtonNext());
         mRemoteViews.setOnClickPendingIntent(R.id.button_stop_notification, pedingButtonStop());
 
-        Notification.Builder notificationBuilder =
-                new Notification.Builder(getApplicationContext());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Notification.Builder notificationBuilder =
+                    new Notification.Builder(getApplicationContext());
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            mNotification = notificationBuilder.setSmallIcon(R.drawable.item_music)
-                    .setDefaults(Notification.FLAG_NO_CLEAR)
-                    .setContent(mRemoteViews)
-                    .build();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                mNotification = notificationBuilder.setSmallIcon(R.drawable.item_music)
+                        .setDefaults(Notification.FLAG_NO_CLEAR)
+                        .setContent(mRemoteViews)
+                        .build();
+            }
+            updateNotification(song, play);
         }
-        updateNotification(song, play);
     }
 }

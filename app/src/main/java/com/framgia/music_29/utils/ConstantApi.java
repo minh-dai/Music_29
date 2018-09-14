@@ -33,6 +33,7 @@ public interface ConstantApi {
     String GENRE_CLASSICAL = "classical";
     String GENRE_COUNTRY = "country";
     String GENRE_PLAYLIST = "PlayList";
+    String GENRE_FAVOURITE = "Favourite Songs";
     String PLAY_URL= STREAM+CLIENT_ID+ BuildConfig.API_KEY;
 
 }

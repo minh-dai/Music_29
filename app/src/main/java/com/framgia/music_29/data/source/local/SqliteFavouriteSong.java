@@ -19,12 +19,13 @@ public class SqliteFavouriteSong extends SQLiteOpenHelper {
     private static final String mArtworkUrl = "artwork_url";
     private static final String mDownloadUrl = "download_url";
     private static final String mUserFullName = "username";
+    private static final String mUri = "uri";
 
-    private Context context;
+    private Context mContext;
 
     public SqliteFavouriteSong(Context context) {
         super(context, DATABASE_NAME, null, 1);
-        this.context = context;
+        mContext = context;
     }
 
     @Override
@@ -34,23 +35,25 @@ public class SqliteFavouriteSong extends SQLiteOpenHelper {
                 + mTitle + " TEXT, "
                 + mArtworkUrl + " TEXT, "
                 + mDownloadUrl + " TEXT,"
+                + mUri + " TEXT, "
                 + mUserFullName + " TEXT)";
         db.execSQL(sqlQuery);
-        Toast.makeText(context, "Create successfylly", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(mContext, "Create successfylly", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
-        Toast.makeText(context, "Drop successfylly", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, "Drop successfylly", Toast.LENGTH_SHORT).show();
     }
 
     //Add new a student
-    public void addStudent(Song student) {
+    public void addSong(Song student) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(mTitle, student.getTitle());
+        values.put(mUri , student.getUri());
         values.put(mDownloadUrl, student.getDownloadUrl());
         values.put(mArtworkUrl, student.getArtworkUrl());
         values.put(mUserFullName, student.getUserFullName());
@@ -65,7 +68,7 @@ public class SqliteFavouriteSong extends SQLiteOpenHelper {
      Getting All Student
       */
 
-    public List<Song> getAllStudent() {
+    public List<Song> getAllSong() {
         List<Song> listStudent = new ArrayList<Song>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_NAME;
@@ -80,7 +83,9 @@ public class SqliteFavouriteSong extends SQLiteOpenHelper {
                 student.setTitle(cursor.getString(1));
                 student.setArtworkUrl(cursor.getString(2));
                 student.setDownloadUrl(cursor.getString(3));
-                student.setUserFullName(cursor.getString(4));
+                student.setUri(cursor.getString(4));
+                student.setUserFullName(cursor.getString(5));
+                student.setIsIsFavourite(true);
                 listStudent.add(student);
             } while (cursor.moveToNext());
         }
@@ -89,10 +94,19 @@ public class SqliteFavouriteSong extends SQLiteOpenHelper {
         return listStudent;
     }
 
+    public boolean getSongById(String id){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM "+ TABLE_NAME + " WHERE " + ID + " = '" + id + "'";
+        Cursor cursor = db.rawQuery(query, null);
+        cursor.moveToFirst();
+        if (cursor.getCount() > 0)
+            return true;
+        return false;
+    }
     /*
     Delete a student by ID
      */
-    public void deleteStudent(Song student) {
+    public void deleteSong(Song student) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_NAME, ID + " = ?", new String[] { String.valueOf(student.getId()) });
         db.close();

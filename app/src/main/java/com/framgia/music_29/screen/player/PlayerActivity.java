@@ -10,15 +10,14 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.framgia.music_29.BuildConfig;
 import com.framgia.music_29.R;
 import com.framgia.music_29.data.model.Song;
+import com.framgia.music_29.data.source.local.SqliteFavouriteSong;
 import com.framgia.music_29.screen.genre.GenreActivity;
 import com.framgia.music_29.screen.service.MusicService;
 import com.framgia.music_29.utils.Constant;
@@ -53,6 +52,7 @@ public class PlayerActivity extends AppCompatActivity
     private boolean mIsBound = false;
     private boolean mIsPlay;
     private boolean mIsRandom;
+    private boolean mIsFavourite;
     private boolean mIsLoop;
     private Handler mHandler;
     private final int mDefaultTimeDelay = 1000;
@@ -121,25 +121,31 @@ public class PlayerActivity extends AppCompatActivity
         mSong = getIntent().getParcelableExtra(GenreActivity.EXTRA_SONG);
         setContextComponent(mSong);
         mSeekBarSong.setOnSeekBarChangeListener(mOnSeekBarChange);
+        mIsFavourite = !mPresenter.onGetFavoriteSong(new SqliteFavouriteSong(this), mSong.getId());
+        setImageFavourite();
     }
 
     private void setContextComponent(Song song) {
         if (song != null) {
             mSong = song;
             mTextSongName.setText(song.getTitle().trim());
+            if (!mSong.isStreamable()) {
+                mImageFavorite.setVisibility(View.GONE);
+            }
             mProgressBar.setVisibility(View.VISIBLE);
-            if (!mSong.isDownloadable()){
+            if (!mSong.isDownloadable()) {
                 mImageDownload.setVisibility(View.GONE);
             }
-            if (mLocal){
+            if (mLocal) {
                 mImageDownload.setVisibility(View.GONE);
                 byte[] images = song.getUriImage();
                 if (images == null) {
                     mImageSong.setImageResource(R.drawable.item_music);
                 } else {
-                    mImageSong.setImageBitmap(BitmapFactory.decodeByteArray(images, 0, song.getUriImage().length));
+                    mImageSong.setImageBitmap(
+                            BitmapFactory.decodeByteArray(images, 0, song.getUriImage().length));
                 }
-            }else {
+            } else {
                 Picasso.with(this)
                         .load(pareString(mSong.getArtworkUrl()))
                         .placeholder(R.drawable.item_music_app)
@@ -148,18 +154,16 @@ public class PlayerActivity extends AppCompatActivity
         }
     }
 
-    private String pareString(String url){
-        if (url.equals(getString(R.string.string_null)))
-            return getString(R.string.string_null);
-        return url.substring( 0, url.lastIndexOf("-")) + Constant.IMAGE_SONG;
+    private String pareString(String url) {
+        if (url.equals(getString(R.string.string_null))) return getString(R.string.string_null);
+        return url.substring(0, url.lastIndexOf("-")) + Constant.IMAGE_SONG;
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_back:
-                onBackPressed();
-                finish();
+                onBackActivity();
                 break;
             case R.id.button_pre:
                 setTextSeekBar();
@@ -173,7 +177,7 @@ public class PlayerActivity extends AppCompatActivity
                 mService.onNextMedia();
                 break;
             case R.id.image_favorite_song:
-                mService.onFavoriteSong();
+                setImageFavourite();
                 break;
             case R.id.image_download:
                 checkExternal();
@@ -191,11 +195,24 @@ public class PlayerActivity extends AppCompatActivity
         }
     }
 
+    private void onBackActivity() {
+        mLocal = false;
+        if (mIsFavourite) {
+            if (!mPresenter.onGetFavoriteSong(new SqliteFavouriteSong(this), mSong.getId())) {
+                mPresenter.onAddFavoriteSong(new SqliteFavouriteSong(this), mSong);
+            }
+        } else {
+            mPresenter.onDeleteFavorite(new SqliteFavouriteSong(this), mSong);
+        }
+        onBackPressed();
+        finish();
+    }
+
     private void checkExternal() {
         if (mPresenter.isExternalStorageReadable()) {
             mService.onDownloadSong(mSong.getUri() + ConstantApi.PLAY_URL, this);
-        }else {
-            Toast.makeText(this , getString(R.string.song_download) , Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, getString(R.string.song_download), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -244,6 +261,16 @@ public class PlayerActivity extends AppCompatActivity
             mImageLoop.setImageResource(R.drawable.ic_random_black);
         }
         mIsLoop = !mIsLoop;
+    }
+
+    @Override
+    public void setImageFavourite() {
+        if (!mIsFavourite) {
+            mImageFavorite.setImageResource(R.drawable.ic_like_red);
+        } else {
+            mImageFavorite.setImageResource(R.drawable.ic_like_white);
+        }
+        mIsFavourite = !mIsFavourite;
     }
 
     private void updateUI() {
@@ -317,12 +344,8 @@ public class PlayerActivity extends AppCompatActivity
 
     @Override
     public void setSong(Song song) {
-        if (mService != null){
-            if (!mService.isPlay()) {
-                mService.updateNotification(song, true);
-            }else {
-                mService.updateNotification(song, false);
-            }
+        if (mService != null) {
+            mService.updateNotification(song, true);
         }
         setContextComponent(song);
     }
@@ -343,6 +366,7 @@ public class PlayerActivity extends AppCompatActivity
                 break;
             case ACTION_MEDIA_FAIL:
                 mIsPlay = true;
+                mProgressBar.setVisibility(View.GONE);
                 Toast.makeText(this, getString(R.string.song_fail), Toast.LENGTH_SHORT).show();
                 break;
         }

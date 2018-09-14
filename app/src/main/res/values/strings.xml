@@ -22,7 +22,7 @@
     <string name="text_search">Search</string>
     <string name="text_hint_search">Song Name</string>
     <string name="not_find_data">Data not find</string>
-    <string name="string_null">Null</string>
+    <string name="string_null">null</string>
     <string name="download">"Downloaded"</string>
     <string name="song_fail">Song Fail</string>
     <string name="song_download">Song is not download</string>

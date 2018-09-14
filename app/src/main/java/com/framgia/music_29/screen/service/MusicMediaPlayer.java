@@ -12,8 +12,8 @@ import java.util.Random;
 
 public class MusicMediaPlayer {
     private MediaPlayer mMediaPlayer;
-    private static List<Song> mSongs;
-    private static int mPosition;
+    private List<Song> mSongs;
+    private int mPosition;
     private Song mSong;
     private static boolean mIsLocal;
     private boolean mIsRandom;
@@ -21,30 +21,21 @@ public class MusicMediaPlayer {
     private IUpdateUi mIUpdateUi;
     private static MusicMediaPlayer mInstant;
 
-    public static MusicMediaPlayer getInstant(List<Song> songs, int position) {
+    public static MusicMediaPlayer getInstant() {
         if (mInstant == null) {
-            mInstant = new MusicMediaPlayer(songs, position);
+            mInstant = new MusicMediaPlayer();
         }
         return mInstant;
     }
 
-    public static MusicMediaPlayer getInstant(List<Song> songs, int position, boolean local) {
+    public static MusicMediaPlayer getInstant(boolean local) {
         mIsLocal = local;
         if (mInstant == null) {
-            mInstant = new MusicMediaPlayer(songs, position);
+            mInstant = new MusicMediaPlayer();
         }
         return mInstant;
     }
 
-    public MusicMediaPlayer(List<Song> songs, int position) {
-        mSongs = songs;
-        mPosition = position;
-        mSong = mSongs.get(mPosition);
-    }
-
-    public void setSongs(List<Song> mSongs) {
-        MusicMediaPlayer.mSongs = mSongs;
-    }
 
     public void setLocal(boolean local) {
         mIsLocal = local;
@@ -56,6 +47,19 @@ public class MusicMediaPlayer {
 
     public Song getSong() {
         return mSong;
+    }
+
+    public void setSongs(List<Song> songs) {
+        mSongs = songs;
+    }
+
+    public void setPosition(int position) {
+        mPosition = position;
+        mSong = mSongs.get(position);
+        if (mIUpdateUi != null) {
+            mIUpdateUi.setSong(mSong);
+        }
+        stopMedia();
     }
 
     public void onStartMedia() {
@@ -75,7 +79,6 @@ public class MusicMediaPlayer {
 
     public void playMediaPre(Song song) {
         mSong = song;
-        mPosition = mSongs.indexOf(song);
         if (mSong.isStreamable()) {
             try {
                 String url;
@@ -119,7 +122,9 @@ public class MusicMediaPlayer {
 
     private void updateSong() {
         mSong = mSongs.get(mPosition);
-        mIUpdateUi.setSong(mSong);
+        if (mIUpdateUi != null) {
+            mIUpdateUi.setSong(mSong);
+        }
     }
 
     public void pauseMedia() {
@@ -176,7 +181,6 @@ public class MusicMediaPlayer {
     private MediaPlayer.OnPreparedListener mOnPrepare = new MediaPlayer.OnPreparedListener() {
         @Override
         public void onPrepared(MediaPlayer mediaPlayer) {
-            mIUpdateUi.setSong(mSong);
             mIUpdateUi.setImagePlay(PlayerActivity.ACTION_MEDIA_START);
             mIUpdateUi.setVisibilityProgressBar();
             mediaPlayer.start();
@@ -186,20 +190,18 @@ public class MusicMediaPlayer {
     private MediaPlayer.OnCompletionListener mCompletion = new MediaPlayer.OnCompletionListener() {
         @Override
         public void onCompletion(MediaPlayer mp) {
-            nextMedia();
-            mIUpdateUi.setImagePlay(PlayerActivity.ACTION_MEDIA_PAUSE);
+            if (mIUpdateUi != null) {
+                nextMedia();
+                mIUpdateUi.setImagePlay(PlayerActivity.ACTION_MEDIA_PAUSE);
+            }
         }
     };
 
     public void stopMedia() {
-        mMediaPlayer.stop();
-        mMediaPlayer.release();
-        mMediaPlayer = null;
-    }
-
-    public void setSong(Song song) {
-        mPosition = mSongs.indexOf(song);
-        mSong = song;
-        playMediaPre();
+        if (mMediaPlayer != null) {
+            mMediaPlayer.stop();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
     }
 }
